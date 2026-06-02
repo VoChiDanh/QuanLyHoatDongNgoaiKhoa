@@ -1,0 +1,324 @@
+@model IEnumerable<QL_HDNK.Models.SuKien>
+@using System
+@using System.Collections.Generic
+@using System.Linq
+
+@{
+    ViewBag.Title = "Danh sách sự kiện";
+    var canApproveEvents = ViewBag.CanApproveEvents as bool? ?? false;
+    var canDeleteEvents = ViewBag.CanDeleteEvents as bool? ?? false;
+    var manageableEventIds = ViewBag.ManageableEventIds as IEnumerable<string> ?? new string[0];
+    var cancellableEventIds = ViewBag.CancellableEventIds as IEnumerable<string> ?? new string[0];
+    var pendingApprovalEventIds = ViewBag.PendingApprovalEventIds as IEnumerable<string> ?? new string[0];
+    var now = DateTime.Now;
+    var events = Model.ToList();
+
+    Func<QL_HDNK.Models.SuKien, string> statusOf = e => e.TrangThaiSuKien != null ? e.TrangThaiSuKien.TenTTSK : "";
+    Func<QL_HDNK.Models.SuKien, string> lowerStatusOf = e => statusOf(e).ToLower();
+    Func<QL_HDNK.Models.SuKien, bool> isPending = e => pendingApprovalEventIds.Contains(e.MaSuKien) || lowerStatusOf(e).Contains("chờ");
+    Func<QL_HDNK.Models.SuKien, bool> isCancelled = e => lowerStatusOf(e).Contains("hủy") || lowerStatusOf(e).Contains("từ chối") || lowerStatusOf(e).Contains("hoãn");
+    Func<QL_HDNK.Models.SuKien, bool> isEnded = e => !isCancelled(e) && !isPending(e) && (lowerStatusOf(e).Contains("kết thúc") || e.ThoiGianKetThuc < now);
+    Func<QL_HDNK.Models.SuKien, bool> isClosed = e => !isCancelled(e) && !isPending(e) && !isEnded(e) && lowerStatusOf(e).Contains("đóng");
+    Func<QL_HDNK.Models.SuKien, bool> isClassLevel = e => !string.IsNullOrWhiteSpace(e.CapToChuc) && (e.CapToChuc.Contains("Lớp") || e.CapToChuc.Equals("Lop", StringComparison.OrdinalIgnoreCase));
+    Func<QL_HDNK.Models.SuKien, string> facultyName = e => e.NguoiDung != null && e.NguoiDung.LopHoc != null && e.NguoiDung.LopHoc.Khoa != null ? e.NguoiDung.LopHoc.Khoa.TenKhoa : "Chưa xác định khoa";
+    Func<QL_HDNK.Models.SuKien, string> className = e => e.NguoiDung != null && e.NguoiDung.LopHoc != null ? e.NguoiDung.LopHoc.TenLop : "Chưa xác định lớp";
+
+    var pendingEvents = events.Where(isPending).OrderByDescending(e => e.ThoiGianBatDau).ToList();
+    var cancelledEvents = events.Where(isCancelled).OrderByDescending(e => e.ThoiGianBatDau).ToList();
+    var endedEvents = events.Where(isEnded).OrderByDescending(e => e.ThoiGianBatDau).ToList();
+    var closedEvents = events.Where(isClosed).OrderBy(e => e.ThoiGianBatDau).ToList();
+    var approvedEvents = events.Where(e => !isPending(e) && !isCancelled(e) && !isEnded(e) && !isClosed(e)).OrderBy(e => e.ThoiGianBatDau).ToList();
+    var approvedFacultyGroups = approvedEvents.Where(e => !isClassLevel(e)).GroupBy(facultyName).OrderBy(g => g.Key).ToList();
+    var approvedClassGroups = approvedEvents.Where(isClassLevel).GroupBy(className).OrderBy(g => g.Key).ToList();
+    var pendingFacultyGroups = pendingEvents.Where(e => !isClassLevel(e)).GroupBy(facultyName).OrderBy(g => g.Key).ToList();
+    var pendingClassGroups = pendingEvents.Where(isClassLevel).GroupBy(className).OrderBy(g => g.Key).ToList();
+    var closedFacultyGroups = closedEvents.Where(e => !isClassLevel(e)).GroupBy(facultyName).OrderBy(g => g.Key).ToList();
+    var closedClassGroups = closedEvents.Where(isClassLevel).GroupBy(className).OrderBy(g => g.Key).ToList();
+    var endedFacultyGroups = endedEvents.Where(e => !isClassLevel(e)).GroupBy(facultyName).OrderBy(g => g.Key).ToList();
+    var endedClassGroups = endedEvents.Where(isClassLevel).GroupBy(className).OrderBy(g => g.Key).ToList();
+    var cancelledFacultyGroups = cancelledEvents.Where(e => !isClassLevel(e)).GroupBy(facultyName).OrderBy(g => g.Key).ToList();
+    var cancelledClassGroups = cancelledEvents.Where(isClassLevel).GroupBy(className).OrderBy(g => g.Key).ToList();
+}
+
+<main class="module-page event-admin-page">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">Quản lý sự kiện</span>
+            <h1>Danh sách sự kiện</h1>
+            <p>Theo dõi trạng thái duyệt, cấp tổ chức và tiến độ tham gia của từng sự kiện.</p>
+        </div>
+        <div class="event-summary-strip">
+            <span><strong>@events.Count</strong> sự kiện</span>
+            <span><strong>@pendingEvents.Count</strong> chờ duyệt</span>
+            <span><strong>@approvedEvents.Count</strong> đang mở</span>
+        </div>
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
+
+    <div class="event-filter-panel">
+        @using (Html.BeginForm("Index", "SuKiens", FormMethod.Get, new { @class = "event-filter-grid" }))
+        {
+            <div>
+                <label class="form-label">Tìm kiếm</label>
+                <input type="text" name="search" class="form-control" value="@ViewBag.CurrentSearch" placeholder="Tên sự kiện, địa điểm..." />
+            </div>
+            <div>
+                <label class="form-label">Học kỳ</label>
+                @Html.DropDownList("maHocKy", (SelectList)ViewBag.MaHocKy, "--- Tất cả ---", new { @class = "form-select" })
+            </div>
+            <div>
+                <label class="form-label">Năm học</label>
+                @Html.DropDownList("maNamHoc", (SelectList)ViewBag.MaNamHoc, "--- Tất cả ---", new { @class = "form-select" })
+            </div>
+            <div>
+                <label class="form-label">Trạng thái</label>
+                @Html.DropDownList("maTTSK", (SelectList)ViewBag.MaTTSK, "--- Tất cả ---", new { @class = "form-select" })
+            </div>
+            <div class="event-filter-actions">
+                <button type="submit" class="btn btn-primary">Lọc</button>
+                @Html.ActionLink("Thêm mới", "Create", null, new { @class = "btn btn-success" })
+            </div>
+        }
+    </div>
+
+    @if (!events.Any())
+    {
+        <section class="empty-state">
+            <h2>Không có sự kiện phù hợp</h2>
+            <p>Thử đổi bộ lọc hoặc tạo sự kiện mới để bắt đầu quản lý.</p>
+        </section>
+    }
+    else
+    {
+        if (pendingEvents.Any())
+        {
+            <section class="event-board-section event-board-pending">
+                <div class="event-board-heading">
+                    <div>
+                        <h2>Chưa được duyệt</h2>
+                        <p>Các sự kiện cần kiểm tra trước khi mở cho sinh viên.</p>
+                    </div>
+                    <span class="status-pill warning">@pendingEvents.Count sự kiện</span>
+                </div>
+                @GroupedEventCards("Cấp khoa", pendingFacultyGroups, manageableEventIds, cancellableEventIds, canApproveEvents, canDeleteEvents, true, false)
+                @GroupedEventCards("Cấp lớp", pendingClassGroups, manageableEventIds, cancellableEventIds, canApproveEvents, canDeleteEvents, true, false)
+            </section>
+        }
+
+        if (approvedFacultyGroups.Any())
+        {
+            <section class="event-board-section">
+                <div class="event-board-heading">
+                    <div>
+                        <h2>Đã duyệt - Sự kiện cấp khoa</h2>
+                        <p>Nhóm theo khoa của người tạo để dễ theo dõi phạm vi tổ chức.</p>
+                    </div>
+                    <span class="status-pill success">@approvedFacultyGroups.Sum(g => g.Count()) sự kiện</span>
+                </div>
+                @foreach (var group in approvedFacultyGroups)
+                {
+                    <div class="event-subgroup">
+                        <h3>@group.Key</h3>
+                        <div class="event-admin-grid">
+                            @foreach (var item in group)
+                            {
+                                @EventCard(item, manageableEventIds.Contains(item.MaSuKien), cancellableEventIds.Contains(item.MaSuKien), canApproveEvents, canDeleteEvents, false, false)
+                            }
+                        </div>
+                    </div>
+                }
+            </section>
+        }
+
+        if (approvedClassGroups.Any())
+        {
+            <section class="event-board-section">
+                <div class="event-board-heading">
+                    <div>
+                        <h2>Đã duyệt - Sự kiện cấp lớp</h2>
+                        <p>Nhóm theo lớp để tránh lẫn các hoạt động nội bộ.</p>
+                    </div>
+                    <span class="status-pill success">@approvedClassGroups.Sum(g => g.Count()) sự kiện</span>
+                </div>
+                @foreach (var group in approvedClassGroups)
+                {
+                    <div class="event-subgroup">
+                        <h3>@group.Key</h3>
+                        <div class="event-admin-grid">
+                            @foreach (var item in group)
+                            {
+                                @EventCard(item, manageableEventIds.Contains(item.MaSuKien), cancellableEventIds.Contains(item.MaSuKien), canApproveEvents, canDeleteEvents, false, false)
+                            }
+                        </div>
+                    </div>
+                }
+            </section>
+        }
+
+        if (closedEvents.Any())
+        {
+            <section class="event-board-section event-board-closed">
+                <div class="event-board-heading">
+                    <div>
+                        <h2>Đã đóng đăng ký</h2>
+                        <p>Sự kiện không còn nhận đăng ký, chuẩn bị hoặc đang trong giai đoạn điểm danh.</p>
+                    </div>
+                    <span class="status-pill warning">@closedEvents.Count sự kiện</span>
+                </div>
+                @GroupedEventCards("Cấp khoa", closedFacultyGroups, manageableEventIds, cancellableEventIds, canApproveEvents, canDeleteEvents, false, false)
+                @GroupedEventCards("Cấp lớp", closedClassGroups, manageableEventIds, cancellableEventIds, canApproveEvents, canDeleteEvents, false, false)
+            </section>
+        }
+
+        if (endedEvents.Any())
+        {
+            <section class="event-board-section event-board-ended">
+                <div class="event-board-heading">
+                    <div>
+                        <h2>Đã kết thúc</h2>
+                        <p>Lưu trữ các sự kiện đã qua để xem chi tiết, xuất báo cáo hoặc kiểm tra điểm danh.</p>
+                    </div>
+                    <span class="status-pill muted">@endedEvents.Count sự kiện</span>
+                </div>
+                @GroupedEventCards("Cấp khoa", endedFacultyGroups, manageableEventIds, cancellableEventIds, canApproveEvents, canDeleteEvents, false, true)
+                @GroupedEventCards("Cấp lớp", endedClassGroups, manageableEventIds, cancellableEventIds, canApproveEvents, canDeleteEvents, false, true)
+            </section>
+        }
+
+        if (cancelledEvents.Any())
+        {
+            <section class="event-board-section event-board-cancelled">
+                <div class="event-board-heading">
+                    <div>
+                        <h2>Đã hủy / từ chối</h2>
+                        <p>Các sự kiện không còn hiệu lực, kèm lý do xử lý nếu có.</p>
+                    </div>
+                    <span class="status-pill danger">@cancelledEvents.Count sự kiện</span>
+                </div>
+                @GroupedEventCards("Cấp khoa", cancelledFacultyGroups, manageableEventIds, cancellableEventIds, canApproveEvents, canDeleteEvents, false, true)
+                @GroupedEventCards("Cấp lớp", cancelledClassGroups, manageableEventIds, cancellableEventIds, canApproveEvents, canDeleteEvents, false, true)
+            </section>
+        }
+    }
+</main>
+
+@helper GroupedEventCards(string scopeTitle, IEnumerable<IGrouping<string, QL_HDNK.Models.SuKien>> groups, IEnumerable<string> manageableEventIds, IEnumerable<string> cancellableEventIds, bool canApproveEvents, bool canDeleteEvents, bool isPendingApproval, bool isArchived)
+{
+    if (groups != null && groups.Any())
+    {
+        <div class="event-scope-block">
+            <div class="event-scope-title">@scopeTitle</div>
+            @foreach (var group in groups)
+            {
+                <div class="event-subgroup">
+                    <h3>@group.Key</h3>
+                    <div class="event-admin-grid">
+                        @foreach (var item in group)
+                        {
+                            @EventCard(item, manageableEventIds.Contains(item.MaSuKien), cancellableEventIds.Contains(item.MaSuKien), canApproveEvents, canDeleteEvents, isPendingApproval, isArchived)
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}
+
+@helper EventCard(QL_HDNK.Models.SuKien item, bool canManageItem, bool canCancelEvent, bool canApproveEvents, bool canDeleteEvents, bool isPendingApproval, bool isArchived)
+{
+    var statusName = item.TrangThaiSuKien != null ? item.TrangThaiSuKien.TenTTSK : "Chưa có trạng thái";
+    var statusLower = statusName.ToLower();
+    var badgeClass = statusLower.Contains("hủy") || statusLower.Contains("từ chối") || statusLower.Contains("hoãn")
+        ? "danger"
+        : statusLower.Contains("chờ") || statusLower.Contains("đóng")
+            ? "warning"
+            : statusLower.Contains("kết thúc")
+                ? "muted"
+                : "success";
+    var ownerClass = item.NguoiDung != null && item.NguoiDung.LopHoc != null ? item.NguoiDung.LopHoc.TenLop : item.MaNguoiTao;
+    var ownerFaculty = item.NguoiDung != null && item.NguoiDung.LopHoc != null && item.NguoiDung.LopHoc.Khoa != null ? item.NguoiDung.LopHoc.Khoa.TenKhoa : "Chưa xác định khoa";
+    var maxText = item.SoLuongToiDa.HasValue ? item.SoLuongToiDa.Value.ToString() : "Không giới hạn";
+    var registrationPercent = item.SoLuongToiDa.HasValue && item.SoLuongToiDa.Value > 0
+        ? Math.Min(100, item.SoLuongDaDangKy * 100 / item.SoLuongToiDa.Value)
+        : 100;
+
+    <article class="event-admin-card @(isArchived ? "is-archived" : "")">
+        <div class="event-card-ribbon @badgeClass"></div>
+        <div class="event-admin-card-head">
+            <div>
+                <div class="event-admin-card-top">
+                    <span class="status-pill @badgeClass">@statusName</span>
+                    <span class="event-level">@item.CapToChuc</span>
+                </div>
+                <h3>@item.TenSuKien</h3>
+            </div>
+        </div>
+        <p class="event-admin-desc">@item.Noidung</p>
+
+        <div class="event-time-band">
+            <div>
+                <span>Bắt đầu</span>
+                <strong>@item.ThoiGianBatDau.ToString("dd/MM HH:mm")</strong>
+            </div>
+            <div>
+                <span>Kết thúc</span>
+                <strong>@item.ThoiGianKetThuc.ToString("dd/MM HH:mm")</strong>
+            </div>
+        </div>
+
+        <div class="event-info-cluster">
+            <span>@item.DiaDiem</span>
+            <span>@ownerFaculty</span>
+            <span>@ownerClass</span>
+            <span>@(item.HocKy != null ? item.HocKy.TenHocKy : "") - @(item.NamHoc != null ? item.NamHoc.TenNamHoc : "")</span>
+        </div>
+
+        <div class="event-registration">
+            <div>
+                <span>Đăng ký</span>
+                <strong>@item.SoLuongDaDangKy / @maxText</strong>
+            </div>
+            <div class="event-progress">
+                <span class="event-progress-fill @(item.SoLuongToiDa.HasValue ? "" : "unlimited")" style="width:@registrationPercent%"></span>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(item.LyDoHuy))
+        {
+            <div class="event-cancel-reason">Lý do: @item.LyDoHuy</div>
+        }
+        <div class="event-admin-actions">
+            @if (canManageItem && canApproveEvents && isPendingApproval)
+            {
+                using (Html.BeginForm("Duyet", "SuKiens", new { id = item.MaSuKien }, FormMethod.Post, new { @class = "inline-form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-success btn-sm">Duyệt</button>
+                }
+                using (Html.BeginForm("TuChoi", "SuKiens", new { id = item.MaSuKien }, FormMethod.Post, new { @class = "inline-form event-reject-form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="text" name="lyDo" class="form-control form-control-sm" placeholder="Lý do..." required />
+                    <button type="submit" class="btn btn-outline-danger btn-sm">Từ chối</button>
+                }
+            }
+            @if (canManageItem && isPendingApproval)
+            {
+                <a href="@Url.Action("Edit", new { id = item.MaSuKien })" class="btn btn-outline-primary btn-sm">Sửa</a>
+            }
+            <a href="@Url.Action("Details", new { id = item.MaSuKien })" class="btn btn-outline-info btn-sm">Chi tiết</a>
+            @if (canCancelEvent)
+            {
+                <a href="@Url.Action("Cancel", new { id = item.MaSuKien })" class="btn btn-outline-warning btn-sm">Hủy</a>
+            }
+            @if (canDeleteEvents)
+            {
+                <a href="@Url.Action("Delete", new { id = item.MaSuKien })" class="btn btn-outline-danger btn-sm">Xóa</a>
+            }
+        </div>
+    </article>
+}

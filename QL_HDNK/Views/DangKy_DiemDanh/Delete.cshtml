@@ -1,0 +1,107 @@
+﻿@model QL_HDNK.Models.DangKy_DiemDanh
+
+@{
+    ViewBag.Title = "Xóa";
+}
+
+<h2>Xóa</h2>
+
+<h3>Bạn có chắc chắn muốn xóa bản ghi này không?</h3>
+<div>
+    <h4>Đăng ký - điểm danh</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ThoiGianDangKy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ThoiGianDangKy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ThoiGianDiemDanh)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ThoiGianDiemDanh)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MinhChung)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MinhChung)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ThoiGianDuyet)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ThoiGianDuyet)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.GhiChu)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GhiChu)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NguoiDung.MaSinhVien)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NguoiDung.MaSinhVien)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SuKien.TenSuKien)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SuKien.TenSuKien)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TrangThaiDangKy.TenTTDK)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TrangThaiDangKy.TenTTDK)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TrangThaiDiemDanh.TenTTDD)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TrangThaiDiemDanh.TenTTDD)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NguoiDung1.MaSinhVien)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NguoiDung1.MaSinhVien)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Xóa" class="btn btn-default" /> |
+            @Html.ActionLink("Quay lại danh sách", "Index")
+        </div>
+    }
+</div>
+
+
+

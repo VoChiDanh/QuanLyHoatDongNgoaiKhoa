@@ -1,0 +1,59 @@
+﻿@model QL_HDNK.Models.DanhMucDiem
+
+@{
+    ViewBag.Title = "Xóa";
+}
+
+<h2>Xóa</h2>
+
+<h3>Bạn có chắc chắn muốn xóa bản ghi này không?</h3>
+<div>
+    <h4>Danh mục điểm</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.TenDanhMuc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TenDanhMuc)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DiemToiDa)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DiemToiDa)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.GhiChu)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GhiChu)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DanhMucDiem2.TenDanhMuc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DanhMucDiem2.TenDanhMuc)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Xóa" class="btn btn-default" /> |
+            @Html.ActionLink("Quay lại danh sách", "Index")
+        </div>
+    }
+</div>
+
+
+

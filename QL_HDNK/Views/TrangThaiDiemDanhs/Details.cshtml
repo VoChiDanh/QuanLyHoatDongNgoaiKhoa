@@ -1,0 +1,29 @@
+﻿@model QL_HDNK.Models.TrangThaiDiemDanh
+
+@{
+    ViewBag.Title = "Chi tiết";
+}
+
+<h2>Chi tiết</h2>
+
+<div>
+    <h4>Trạng thái điểm danh</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.TenTTDD)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TenTTDD)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Sửa", "Edit", new { id = Model.MaTTDD }) |
+    @Html.ActionLink("Quay lại danh sách", "Index")
+</p>
+
+
+

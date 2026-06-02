@@ -1,0 +1,307 @@
+﻿@model QL_HDNK.Models.SuKien
+
+@{
+    ViewBag.Title = "Chi tiết";
+    var canManageEvent = ViewBag.CanManageEvent as bool? ?? false;
+    var canApproveEvents = ViewBag.CanApproveEvents as bool? ?? false;
+    var canDeleteEvents = ViewBag.CanDeleteEvents as bool? ?? false;
+    var canCancelEvent = ViewBag.CanCancelEvent as bool? ?? false;
+    var isPendingApproval = ViewBag.IsPendingApproval as bool? ?? false;
+}
+
+<h2>Chi tiết</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+@if (canManageEvent)
+{
+    <div class="action-strip">
+        @if (canApproveEvents && isPendingApproval)
+        {
+            using (Html.BeginForm("Duyet", "SuKiens", new { id = Model.MaSuKien }, FormMethod.Post, new { @class = "inline-form" }))
+            {
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-primary">Duyệt và mở đăng ký</button>
+            }
+            using (Html.BeginForm("TuChoi", "SuKiens", new { id = Model.MaSuKien }, FormMethod.Post, new { @class = "inline-form notification-reject-form" }))
+            {
+                @Html.AntiForgeryToken()
+                <input type="text" name="lyDo" class="form-control form-control-sm" placeholder="Lý do từ chối" />
+                <button type="submit" class="btn btn-outline-danger">Từ chối</button>
+            }
+        }
+        @Html.ActionLink("Xuất Excel", "XuatExcel", new { id = Model.MaSuKien }, new { @class = "btn btn-primary" })
+        @Html.ActionLink("Xuất PDF", "XuatPdf", new { id = Model.MaSuKien }, new { @class = "btn btn-primary" })
+        <button type="button" class="btn btn-outline-dark" data-bs-toggle="collapse" data-bs-target="#qrPanel">Mở mã QR cho sinh viên quét</button>
+        @using (Html.BeginForm("GuiNhacNho", "SuKiens", new { id = Model.MaSuKien }, FormMethod.Post, new { @class = "inline-form" }))
+        {
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-outline-dark">Gửi email nhắc nhở</button>
+        }
+    </div>
+}
+
+@if (canManageEvent)
+{
+    <div id="qrPanel" class="collapse qr-panel" data-qr-url="@Url.Action("QrDiemDanh", "SuKiens", new { id = Model.MaSuKien })" data-link-url="@Url.Action("DiemDanhUrl", "SuKiens", new { id = Model.MaSuKien })">
+        <img id="attendanceQrImage" src="@Url.Action("QrDiemDanh", "SuKiens", new { id = Model.MaSuKien, v = DateTime.Now.Ticks })" alt="QR điểm danh" />
+        <p>Mã QR này dành riêng cho sự kiện hiện tại. Sinh viên đăng nhập trên điện thoại, mở mục Quét QR điểm danh và quét mã này. Sau khi quét, lượt điểm danh chuyển sang trạng thái chờ duyệt; cán bộ duyệt thì sinh viên mới được tính điểm.</p>
+        <div class="qr-link-box">
+            <label>Link kiểm thử hoặc gửi qua ngrok</label>
+            <input id="attendanceQrLink" class="form-control" type="text" value="@ViewBag.DiemDanhUrl" readonly />
+            <a id="attendanceQrOpenLink" class="btn btn-primary" href="@ViewBag.DiemDanhUrl" target="_blank" rel="noopener">Mở link quét QR</a>
+        </div>
+    </div>
+}
+
+@if (canManageEvent)
+{
+    <div class="card mb-4">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">Quản lý trạng thái sự kiện</h5>
+        </div>
+        <div class="card-body">
+            <p>Trạng thái hiện tại: <strong>@(Model.TrangThaiSuKien != null ? Model.TrangThaiSuKien.TenTTSK : "N/A")</strong></p>
+            <div class="d-flex flex-wrap gap-2">
+                @using (Html.BeginForm("ChangeStatus", "SuKiens", new { id = Model.MaSuKien }, FormMethod.Post, new { @class = "inline-form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="status" value="mo-dang-ky" />
+                    <button type="submit" class="btn btn-outline-success @(Model.TrangThaiSuKien?.TenTTSK.Contains("mở") == true ? "disabled" : "")">Mở đăng ký</button>
+                }
+                @using (Html.BeginForm("ChangeStatus", "SuKiens", new { id = Model.MaSuKien }, FormMethod.Post, new { @class = "inline-form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="status" value="dang-dien-ra" />
+                    <button type="submit" class="btn btn-outline-info @(Model.TrangThaiSuKien?.TenTTSK.Contains("diễn ra") == true ? "disabled" : "")">Đang diễn ra</button>
+                }
+                @using (Html.BeginForm("ChangeStatus", "SuKiens", new { id = Model.MaSuKien }, FormMethod.Post, new { @class = "inline-form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="status" value="dong-dang-ky" />
+                    <button type="submit" class="btn btn-outline-warning @(Model.TrangThaiSuKien?.TenTTSK.Contains("đóng") == true ? "disabled" : "")">Đóng đăng ký</button>
+                }
+                @using (Html.BeginForm("ChangeStatus", "SuKiens", new { id = Model.MaSuKien }, FormMethod.Post, new { @class = "inline-form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="status" value="ket-thuc" />
+                    <button type="submit" class="btn btn-outline-secondary @(Model.TrangThaiSuKien?.TenTTSK.Contains("kết thúc") == true ? "disabled" : "")">Kết thúc</button>
+                }
+                @using (Html.BeginForm("ChangeStatus", "SuKiens", new { id = Model.MaSuKien }, FormMethod.Post, new { @class = "inline-form" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="status" value="tam-hoan" />
+                    <button type="submit" class="btn btn-outline-danger @(Model.TrangThaiSuKien?.TenTTSK.Contains("hoãn") == true ? "disabled" : "")">Tạm hoãn</button>
+                }
+            </div>
+            <small class="text-muted d-block mt-2">* Lưu ý: Việc thay đổi trạng thái thủ công sẽ ảnh hưởng đến khả năng đăng ký và điểm danh của sinh viên.</small>
+        </div>
+    </div>
+}
+
+<div>
+    <h4>Sự kiện</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.TenSuKien)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TenSuKien)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Noidung)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Noidung)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ThoiGianBatDau)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ThoiGianBatDau)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ThoiGianKetThuc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ThoiGianKetThuc)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DiaDiem)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DiaDiem)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SoLuongToiDa)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SoLuongToiDa)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CapToChuc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CapToChuc)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LyDoHuy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LyDoHuy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SoLuongDaDangKy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SoLuongDaDangKy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.HocKy.TenHocKy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.HocKy.TenHocKy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MucDiemRenLuyen.TenMucDRL)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MucDiemRenLuyen.TenMucDRL)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NamHoc.TenNamHoc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NamHoc.TenNamHoc)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NguoiDung.MaSinhVien)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NguoiDung.MaSinhVien)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TrangThaiSuKien.TenTTSK)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TrangThaiSuKien.TenTTSK)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @if (canManageEvent)
+    {
+        @Html.ActionLink("Sửa", "Edit", new { id = Model.MaSuKien })
+        @: |
+    }
+    @if (canCancelEvent)
+    {
+        @Html.ActionLink("Hủy", "Cancel", new { id = Model.MaSuKien })
+        @: |
+    }
+    @if (canDeleteEvents)
+    {
+        @Html.ActionLink("Xóa", "Delete", new { id = Model.MaSuKien })
+        @: |
+    }
+    @Html.ActionLink("Quay lại danh sách", "Index")
+</p>
+
+@section scripts {
+    @if (canManageEvent)
+    {
+        <script>
+            (function () {
+                var panel = document.getElementById("qrPanel");
+                var qrImage = document.getElementById("attendanceQrImage");
+                var qrInput = document.getElementById("attendanceQrLink");
+                var qrOpenLink = document.getElementById("attendanceQrOpenLink");
+                var refreshTimer = null;
+                var refreshIntervalMs = Math.max(5000, (@QL_HDNK.Services.QrTokenService.QrIntervalSeconds * 1000) / 2);
+
+                if (!panel || !qrImage || !qrInput || !qrOpenLink) {
+                    return;
+                }
+
+                function refreshQr() {
+                    var stamp = new Date().getTime();
+                    var separator = panel.dataset.qrUrl.indexOf("?") === -1 ? "?" : "&";
+                    qrImage.src = panel.dataset.qrUrl + separator + "v=" + stamp;
+
+                    fetch(panel.dataset.linkUrl, { credentials: "same-origin", cache: "no-store" })
+                        .then(function (response) {
+                            if (!response.ok) {
+                                return null;
+                            }
+
+                            return response.json();
+                        })
+                        .then(function (data) {
+                            if (!data || !data.url) {
+                                return;
+                            }
+
+                            qrInput.value = data.url;
+                            qrOpenLink.href = data.url;
+                        });
+                }
+
+                function startRefresh() {
+                    refreshQr();
+                    if (refreshTimer) {
+                        window.clearInterval(refreshTimer);
+                    }
+
+                    refreshTimer = window.setInterval(refreshQr, refreshIntervalMs);
+                }
+
+                function stopRefresh() {
+                    if (refreshTimer) {
+                        window.clearInterval(refreshTimer);
+                        refreshTimer = null;
+                    }
+                }
+
+                panel.addEventListener("shown.bs.collapse", startRefresh);
+                panel.addEventListener("hidden.bs.collapse", stopRefresh);
+
+                if (panel.classList.contains("show")) {
+                    startRefresh();
+                }
+            })();
+        </script>
+    }
+}
+

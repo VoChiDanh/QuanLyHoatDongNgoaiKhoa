@@ -1,0 +1,43 @@
+@model QL_HDNK.Models.SuKien
+
+@{
+    ViewBag.Title = "Gửi minh chứng điểm danh";
+    var token = ViewBag.Token as string;
+}
+
+<main class="module-page">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">Điểm danh</span>
+            <h1>Gửi minh chứng điểm danh</h1>
+            <p>Quét QR chỉ xác nhận đúng sự kiện. Bạn cần chụp hoặc tải ảnh minh chứng tại điểm danh để cán bộ duyệt.</p>
+        </div>
+    </div>
+
+    <section class="scanner-shell">
+        <h2>@Model.TenSuKien</h2>
+        <dl class="evidence-summary">
+            <dt>Thời gian</dt>
+            <dd>@Model.ThoiGianBatDau.ToString("dd/MM/yyyy HH:mm") - @Model.ThoiGianKetThuc.ToString("dd/MM/yyyy HH:mm")</dd>
+            <dt>Địa điểm</dt>
+            <dd>@Model.DiaDiem</dd>
+        </dl>
+
+        @using (Html.BeginForm("DiemDanhSuKien", "SinhVien", new { id = Model.MaSuKien, token = token }, FormMethod.Post, new { enctype = "multipart/form-data", @class = "evidence-form" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group">
+                <label class="control-label required" for="minhChungAnh">Ảnh minh chứng</label>
+                <input id="minhChungAnh" name="minhChungAnh" type="file" accept="image/*" capture="environment" class="form-control" required />
+                @Html.ValidationMessage("minhChungAnh", "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Gửi minh chứng</button>
+                @Html.ActionLink("Quay lại lịch cá nhân", "LichCaNhan", null, new { @class = "btn btn-secondary" })
+            </div>
+        }
+    </section>
+</main>

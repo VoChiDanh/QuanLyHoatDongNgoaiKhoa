@@ -1,0 +1,45 @@
+﻿@model QL_HDNK.Models.HocKy
+
+@{
+    ViewBag.Title = "Chi tiết";
+}
+
+<h2>Chi tiết</h2>
+
+<div>
+    <h4>Học kỳ</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.TenHocKy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TenHocKy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TuNgay)
+        </dt>
+
+        <dd>
+            @(Model.TuNgay.HasValue ? Model.TuNgay.Value.ToString("dd/MM/yyyy") : "-")
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DenNgay)
+        </dt>
+
+        <dd>
+            @(Model.DenNgay.HasValue ? Model.DenNgay.Value.ToString("dd/MM/yyyy") : "-")
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Sửa", "Edit", new { id = Model.MaHocKy }) |
+    @Html.ActionLink("Quay lại danh sách", "Index")
+</p>
+
+
+

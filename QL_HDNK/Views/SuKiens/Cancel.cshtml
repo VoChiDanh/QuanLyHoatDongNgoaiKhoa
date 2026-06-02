@@ -1,0 +1,145 @@
+﻿@model QL_HDNK.Models.SuKien
+
+@{
+    ViewBag.Title = "Hủy sự kiện";
+}
+
+<h2>Hủy sự kiện</h2>
+
+<h3>Bạn có chắc chắn muốn hủy sự kiện này không?</h3>
+<div>
+    <h4>Sự kiện</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.TenSuKien)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TenSuKien)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Noidung)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Noidung)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ThoiGianBatDau)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ThoiGianBatDau)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ThoiGianKetThuc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ThoiGianKetThuc)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DiaDiem)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DiaDiem)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SoLuongToiDa)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SoLuongToiDa)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CapToChuc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CapToChuc)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LyDoHuy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LyDoHuy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.SoLuongDaDangKy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SoLuongDaDangKy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.HocKy.TenHocKy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.HocKy.TenHocKy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MucDiemRenLuyen.TenMucDRL)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MucDiemRenLuyen.TenMucDRL)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NamHoc.TenNamHoc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NamHoc.TenNamHoc)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NguoiDung.MaSinhVien)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NguoiDung.MaSinhVien)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TrangThaiSuKien.TenTTSK)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TrangThaiSuKien.TenTTSK)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-group mb-3" style="margin-top: 15px;">
+            <label for="lyDoHuy" class="control-label fw-bold text-danger">Lý do hủy sự kiện (Bắt buộc):</label>
+            <textarea name="lyDoHuy" id="lyDoHuy" class="form-control" rows="3" placeholder="Nhập lý do tại sao sự kiện này bị hủy..." required></textarea>
+        </div>
+
+        <div class="form-actions no-color mt-3">
+            <button type="submit" class="btn btn-danger">Xác nhận hủy sự kiện</button> |
+            @Html.ActionLink("Quay lại danh sách", "Index")
+        </div>
+    }
+</div>
+
+
+

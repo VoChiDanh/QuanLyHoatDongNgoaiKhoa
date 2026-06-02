@@ -1,0 +1,45 @@
+﻿@model QL_HDNK.Models.NhatKyHeThong
+
+@{
+    ViewBag.Title = "Chi tiết";
+}
+
+<h2>Chi tiết</h2>
+
+<div>
+    <h4>Nhật ký hệ thống</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.ChiTiet)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ChiTiet)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ThoiGian)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ThoiGian)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NguoiDung.MaSinhVien)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NguoiDung.MaSinhVien)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Sửa", "Edit", new { id = Model.MaNhatKy }) |
+    @Html.ActionLink("Quay lại danh sách", "Index")
+</p>
+
+
+

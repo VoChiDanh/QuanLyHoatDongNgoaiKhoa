@@ -1,0 +1,79 @@
+﻿@model QL_HDNK.Models.DiemRenLuyenViewModel
+
+@{
+    ViewBag.Title = "Điểm rèn luyện";
+}
+
+<main class="module-page">
+    <div class="score-summary">
+        <span class="eyebrow">Phiếu điểm tạm tính</span>
+        <h1>@Model.TongDiem điểm</h1>
+        <p>Tổng điểm được tính toán từ các sự kiện đã kết thúc và điểm danh.</p>
+    </div>
+    @using (Html.BeginForm("XuatPdfCaNhan", "SinhVien", FormMethod.Post, new { @class = "d-inline" }))
+    {
+        @Html.AntiForgeryToken() <button type="submit" class="btn btn-danger btn-sm">
+            <i class="fa fa-file-pdf"></i> Xuất Phiếu Điểm PDF
+        </button>
+    }
+
+    @foreach (var danhMuc in Model.DanhMucs)
+    {
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 text-primary">@danhMuc.TenDanhMuc</h5>
+                <div>
+                    <span class="badge bg-success" style="font-size: 1rem;">Đạt: @danhMuc.DiemDatDuoc / @danhMuc.DiemToiDa</span>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Sự kiện</th>
+                                <th>Mức điểm</th>
+                                <th>Trạng thái</th>
+                                <th class="text-end">Điểm cộng/trừ</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var chiTiet in danhMuc.ChiTiets)
+                            {
+                                <tr>
+                                    <td>@chiTiet.TenSuKien</td>
+                                    <td>@chiTiet.TenMucDiem</td>
+                                    <td>
+                                        @if (chiTiet.DaThamGia)
+                                        {
+                                            <span class="badge bg-success">Đã tham gia @(chiTiet.ThoiGianDiemDanh.HasValue ? "(" + chiTiet.ThoiGianDiemDanh.Value.ToString("dd/MM/yyyy") + ")" : "")</span>
+                                        }
+                                        else if (!chiTiet.IsEnded)
+                                        {
+                                            <span class="badge bg-warning text-dark">Chờ diễn ra / Chưa điểm danh</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">Vắng mặt</span>
+                                        }
+                                    </td>
+                                    <td class="text-end fw-bold @(chiTiet.DiemCongTrangThai > 0 ? "text-success" : "text-danger")">
+                                        @(chiTiet.DiemCongTrangThai > 0 ? "+" + chiTiet.DiemCongTrangThai : chiTiet.DiemCongTrangThai.ToString())
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    @if (!Model.DanhMucs.Any())
+    {
+        <div class="alert alert-info mt-4">
+            Chưa có dữ liệu điểm rèn luyện. Điểm chỉ được tính sau khi bạn điểm danh thành công hoặc sau khi sự kiện kết thúc.
+        </div>
+    }
+</main>
+

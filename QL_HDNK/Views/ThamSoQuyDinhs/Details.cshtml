@@ -1,0 +1,53 @@
+﻿@model QL_HDNK.Models.ThamSoQuyDinh
+
+@{
+    ViewBag.Title = "Chi tiết";
+}
+
+<h2>Chi tiết</h2>
+
+<div>
+    <h4>Tham số quy định</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.TenTS)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TenTS)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.GiaTri)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.GiaTri)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DonViTinh)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DonViTinh)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TinhTrang)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TinhTrang)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Sửa", "Edit", new { id = Model.MaTS }) |
+    @Html.ActionLink("Quay lại danh sách", "Index")
+</p>
+
+
+

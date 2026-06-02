@@ -1,0 +1,45 @@
+﻿@model QL_HDNK.Models.MucDiemRenLuyen
+
+@{
+    ViewBag.Title = "Chi tiết";
+}
+
+<h2>Chi tiết</h2>
+
+<div>
+    <h4>Mức điểm rèn luyện</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.TenMucDRL)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TenMucDRL)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Diem)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Diem)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DanhMucDiem.TenDanhMuc)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DanhMucDiem.TenDanhMuc)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Sửa", "Edit", new { id = Model.MaMucDRL }) |
+    @Html.ActionLink("Quay lại danh sách", "Index")
+</p>
+
+
+

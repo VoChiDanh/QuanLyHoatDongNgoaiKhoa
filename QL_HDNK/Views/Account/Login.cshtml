@@ -1,0 +1,47 @@
+﻿@model QL_HDNK.Models.LoginViewModel
+
+@{
+    ViewBag.Title = "Đăng nhập";
+}
+
+<main class="auth-page" aria-labelledby="title">
+    <section class="auth-card">
+        <span class="eyebrow">QUẢN LÝ HOẠT ĐỘNG NGOẠI KHÓA</span>
+        <h1 id="title">Đăng nhập hệ thống</h1>
+        <p class="lead">Sử dụng mã sinh viên, email hoặc mã người dùng để truy cập các chức năng quản lý hoạt động ngoại khóa.</p>
+
+        @using (Html.BeginForm("Login", "Account", new { returnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "auth-form" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.TaiKhoan, htmlAttributes: new { @class = "control-label" })
+                @Html.TextBoxFor(model => model.TaiKhoan, new { @class = "form-control", autocomplete = "username", placeholder = "Mã sinh viên hoặc email" })
+                @Html.ValidationMessageFor(model => model.TaiKhoan, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.MatKhau, htmlAttributes: new { @class = "control-label" })
+                @Html.PasswordFor(model => model.MatKhau, new { @class = "form-control", autocomplete = "current-password", placeholder = "Mật khẩu" })
+                @Html.ValidationMessageFor(model => model.MatKhau, "", new { @class = "text-danger" })
+            </div>
+
+            <label class="check-line">
+                @Html.CheckBoxFor(model => model.GhiNho)
+                <span>Ghi nhớ đăng nhập</span>
+            </label>
+
+            <button type="submit" class="btn btn-primary btn-lg">Đăng nhập</button>
+        }
+
+        <div class="auth-switch">
+            Chưa có tài khoản? @Html.ActionLink("Đăng ký ngay", "Register", "Account")
+        </div>
+    </section>
+</main>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+

@@ -1,0 +1,174 @@
+@{
+    ViewBag.Title = "Quét QR điểm danh";
+}
+
+<main class="module-page scanner-page">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">Sinh viên</span>
+            <h1>Quét QR điểm danh</h1>
+            <p>Đưa mã QR của sự kiện vào khung quét. Sau khi quét, lượt điểm danh sẽ chuyển sang trạng thái chờ duyệt.</p>
+        </div>
+    </div>
+
+    <section class="scanner-shell">
+        <div class="scanner-frame">
+            <video id="qrVideo" playsinline muted></video>
+            <div class="scanner-corners" aria-hidden="true"></div>
+        </div>
+
+        <div class="scanner-actions">
+            <button type="button" id="startScanner" class="btn btn-primary">Mở lại camera</button>
+            <button type="button" id="stopScanner" class="btn btn-secondary" disabled>Dừng quét</button>
+        </div>
+
+        <div id="scannerStatus" class="scanner-status">Đang chuẩn bị mở camera...</div>
+
+        <form id="manualQrForm" class="manual-qr-form">
+            <label for="manualQr">Dán link QR nếu trình duyệt không đọc được camera</label>
+            <div class="manual-qr-row">
+                <input id="manualQr" class="form-control" type="url" placeholder="Dán link điểm danh từ QR" />
+                <button type="submit" class="btn btn-primary">Gửi điểm danh</button>
+            </div>
+        </form>
+    </section>
+</main>
+
+@section scripts {
+    <script>
+        (function () {
+            var video = document.getElementById("qrVideo");
+            var startButton = document.getElementById("startScanner");
+            var stopButton = document.getElementById("stopScanner");
+            var statusBox = document.getElementById("scannerStatus");
+            var manualForm = document.getElementById("manualQrForm");
+            var manualInput = document.getElementById("manualQr");
+            var stream = null;
+            var detector = null;
+            var scanning = false;
+
+            function setStatus(message, isError) {
+                statusBox.textContent = message;
+                statusBox.classList.toggle("error", !!isError);
+            }
+
+            function normalizeQrValue(value) {
+                value = (value || "").trim();
+                if (!value) {
+                    return "";
+                }
+
+                if (value.charAt(0) === "/") {
+                    return window.location.origin + value;
+                }
+
+                return value;
+            }
+
+            function goToQr(value) {
+                var url = normalizeQrValue(value);
+                if (!url) {
+                    setStatus("Không đọc được nội dung QR.", true);
+                    return;
+                }
+
+                try {
+                    var target = new URL(url, window.location.origin);
+                    var path = target.pathname.toLowerCase();
+                    if (path.indexOf("/sinhvien/diemdanhsukien") >= 0) {
+                        window.location.href = target.href;
+                        return;
+                    }
+                } catch (error) {
+                    setStatus("QR không phải link hợp lệ.", true);
+                    return;
+                }
+
+                setStatus("QR không phải link điểm danh của hệ thống. Hãy mở QR từ Chi tiết sự kiện, nút Mở mã QR cho sinh viên quét.", true);
+            }
+
+            async function startScanner() {
+                stopScanner(false);
+
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    setStatus("Trình duyệt không cho phép mở camera. Hãy dùng Chrome/Edge/Safari mới và mở web bằng HTTPS/ngrok.", true);
+                    return;
+                }
+
+                if (!("BarcodeDetector" in window)) {
+                    setStatus("Trình duyệt này chưa hỗ trợ đọc QR trực tiếp. Hãy dùng Chrome/Edge trên Android hoặc dán link QR vào ô bên dưới.", true);
+                    return;
+                }
+
+                try {
+                    detector = new BarcodeDetector({ formats: ["qr_code"] });
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: { ideal: "environment" },
+                            width: { ideal: 1280 },
+                            height: { ideal: 720 }
+                        },
+                        audio: false
+                    });
+
+                    video.srcObject = stream;
+                    await video.play();
+                    scanning = true;
+                    startButton.disabled = true;
+                    stopButton.disabled = false;
+                    setStatus("Camera đã mở. Đưa mã QR vào giữa khung.");
+                    requestAnimationFrame(scanLoop);
+                } catch (error) {
+                    setStatus("Không mở được camera. Trên điện thoại hãy cấp quyền camera và dùng URL HTTPS của ngrok.", true);
+                }
+            }
+
+            async function scanLoop() {
+                if (!scanning) {
+                    return;
+                }
+
+                try {
+                    var codes = await detector.detect(video);
+                    if (codes && codes.length > 0) {
+                        stopScanner(false);
+                        setStatus("Đã đọc QR, đang chuyển sang trang xác nhận điểm danh...");
+                        goToQr(codes[0].rawValue);
+                        return;
+                    }
+                } catch (error) {
+                    setStatus("Chưa đọc được QR. Giữ máy ổn định và tăng sáng màn hình hiển thị mã.", true);
+                }
+
+                requestAnimationFrame(scanLoop);
+            }
+
+            function stopScanner(showMessage) {
+                scanning = false;
+                startButton.disabled = false;
+                stopButton.disabled = true;
+
+                if (stream) {
+                    stream.getTracks().forEach(function (track) { track.stop(); });
+                    stream = null;
+                }
+
+                video.srcObject = null;
+                if (showMessage) {
+                    setStatus("Đã dừng quét.");
+                }
+            }
+
+            startButton.addEventListener("click", startScanner);
+            stopButton.addEventListener("click", function () { stopScanner(true); });
+
+            manualForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                goToQr(manualInput.value);
+            });
+
+            document.addEventListener("DOMContentLoaded", startScanner);
+            window.addEventListener("beforeunload", function () { stopScanner(false); });
+        })();
+    </script>
+}

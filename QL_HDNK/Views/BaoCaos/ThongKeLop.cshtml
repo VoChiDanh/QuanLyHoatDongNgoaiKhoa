@@ -1,0 +1,266 @@
+@model QL_HDNK.Models.ClassReportViewModel
+@using System.Linq
+
+@{
+    ViewBag.Title = "Thống kê tham gia hoạt động lớp";
+
+    // Khởi tạo các biến tính toán thống kê tổng quan
+    int totalPossible = Model.TotalStudents * Model.TotalEvents;
+    int totalAttended = 0;
+    double avgParticipation = 0;
+
+    if (Model.Rows != null && Model.Rows.Any())
+    {
+        totalAttended = Model.Rows.Sum(r => r.Cells.Count(c => c.CoMat));
+        avgParticipation = totalPossible > 0 ? Math.Round((double)totalAttended / totalPossible * 100, 1) : 0;
+    }
+}
+
+<main class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="h4 mb-0 text-primary">
+            <i class="bi bi-bar-chart-fill me-2"></i>Thống kê tham gia hoạt động lớp
+        </h2>
+    </div>
+
+    <section class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            @using (Html.BeginForm("ThongKeLop", "BaoCaos", FormMethod.Get, new { id = "filterForm" }))
+            {
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Khoa</label>
+                        @Html.DropDownList("maKhoa", Model.KhoaList, "-- Chọn Khoa --", new { @class = "form-select", onchange = "this.form.submit()" })
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Lớp</label>
+                        @Html.DropDownList("maLop", Model.LopList, "-- Chọn Lớp --", new { @class = "form-select", onchange = "this.form.submit()" })
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Năm học</label>
+                        @Html.DropDownList("maNamHoc", Model.NamHocList, "-- Chọn Năm học --", new { @class = "form-select" })
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Học kỳ</label>
+                        @Html.DropDownList("maHocKy", Model.HocKyList, "-- Chọn Học kỳ --", new { @class = "form-select" })
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100">Tính</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    @if (Model.Rows != null && Model.Rows.Any())
+    {
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card bg-primary text-white border-0 shadow-sm h-100">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="display-4 me-3"><i class="bi bi-people"></i></div>
+                        <div>
+                            <h6 class="card-title mb-1 text-white-150">Tổng sinh viên</h6>
+                            <h2 class="mb-0 fw-bold">@Model.TotalStudents</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-success text-white border-0 shadow-sm h-100">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="display-4 me-3"><i class="bi bi-calendar-event"></i></div>
+                        <div>
+                            <h6 class="card-title mb-1 text-white-150">Tổng số sự kiện</h6>
+                            <h2 class="mb-0 fw-bold">@Model.TotalEvents</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-info text-white border-0 shadow-sm h-100">
+                    <div class="card-body d-flex align-items-center">
+                        <div class="display-4 me-3"><i class="bi bi-pie-chart"></i></div>
+                        <div>
+                            <h6 class="card-title mb-1 text-white-150">Tỷ lệ tham gia trung bình</h6>
+                            <h2 class="mb-0 fw-bold">@avgParticipation%</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center mb-4">
+            <div class="col-lg-5 col-md-8">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-header bg-white text-center">
+                        <h6 class="mb-0 fw-bold text-secondary">Tổng quan điểm danh</h6>
+                    </div>
+                    <div class="card-body d-flex justify-content-center align-items-center">
+                        <canvas id="pieChart" style="max-height: 250px;"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="card shadow-sm border-0 overflow-hidden">
+            <div class="card-header bg-light d-flex justify-content-between align-items-center py-3">
+                <div class="d-flex align-items-center">
+                    <span class="badge bg-primary me-2 fs-6">Lớp: @Model.TenLop</span>
+                </div>
+                <div class="btn-group shadow-sm">
+                    @using (Html.BeginForm("ExportClass", "BaoCaos", FormMethod.Post))
+                    {
+                        @Html.HiddenFor(m => m.MaKhoa)
+                        @Html.HiddenFor(m => m.MaLop)
+                        @Html.HiddenFor(m => m.MaNamHoc)
+                        @Html.HiddenFor(m => m.MaHocKy)
+                        <input type="hidden" name="format" value="excel" />
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-file-earmark-excel me-1"></i>Xuất Excel
+                        </button>
+                    }
+                    @using (Html.BeginForm("ExportClass", "BaoCaos", FormMethod.Post))
+                    {
+                        @Html.HiddenFor(m => m.MaKhoa)
+                        @Html.HiddenFor(m => m.MaLop)
+                        @Html.HiddenFor(m => m.MaNamHoc)
+                        @Html.HiddenFor(m => m.MaHocKy)
+                        <input type="hidden" name="format" value="pdf" />
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-file-earmark-pdf me-1"></i>Xuất PDF
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover mb-0 align-middle">
+                    <thead class="text-dark text-center sticky-top shadow-sm">
+                        <tr>
+                            <th rowspan="2" class="align-middle border-end sticky-column" style="min-width: 240px; background: #e9ecef; border-bottom: 2px solid #dee2e6; z-index: 4;">
+                                Sinh viên / Mã SV
+                            </th>
+                            <th rowspan="2" class="align-middle border-end bg-light" style="min-width: 100px; border-bottom: 2px solid #dee2e6;">
+                                Tổng Tham Gia
+                            </th>
+                            <th rowspan="2" class="align-middle border-end bg-light" style="min-width: 100px; border-bottom: 2px solid #dee2e6;">
+                                Tỷ lệ (%)
+                            </th>
+                            @foreach (var ev in Model.Events)
+                            {
+                                <th class="fw-bold small p-2" style="min-width: 140px; background: #f1f3f5; border-bottom: 2px solid #dee2e6; color: #495057;">
+                                    <div class="mb-1 text-primary text-wrap" style="max-width: 200px; margin: 0 auto;">@ev.TenSuKien</div>
+                                    <div class="text-muted fw-normal">(@ev.ThoiGianText)</div>
+                                </th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in Model.Rows)
+                        {
+                            int studentAttended = row.Cells.Count(c => c.CoMat);
+                            double studentPercent = Model.TotalEvents > 0 ? Math.Round((double)studentAttended / Model.TotalEvents * 100, 1) : 0;
+                            string percentColor = studentPercent >= 80 ? "text-success" : (studentPercent >= 50 ? "text-warning" : "text-danger");
+
+                            <tr>
+                                <td class="sticky-column border-end" style="z-index: 2;">
+                                    <div class="fw-bold text-dark">@row.HoTen</div>
+                                    <div class="small text-secondary">@row.MaSinhVien</div>
+                                </td>
+                                <td class="text-center border-end fw-bold">
+                                    @studentAttended / @Model.TotalEvents
+                                </td>
+                                <td class="text-center border-end fw-bold @percentColor">
+                                    @studentPercent%
+                                </td>
+                                @foreach (var cell in row.Cells)
+                                {
+                                    <td class="text-center @(cell.CoMat ? "bg-success bg-opacity-10" : "")">
+                                        @if (cell.CoMat)
+                                        {
+                                            <span class="badge bg-success rounded-pill" title="@cell.TrangThaiText">
+                                                <i class="bi bi-check-circle-fill"></i>
+                                                @if (cell.Diem > 0)
+                                                {<span class="ms-1">+@cell.Diem</span>}
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted opacity-50" title="@cell.TrangThaiText">-</span>
+                                        }
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    }
+</main>
+
+<style>
+    .sticky-column {
+        position: sticky;
+        left: 0;
+        background: #ffffff !important;
+        box-shadow: 2px 0 5px rgba(0,0,0,0.05);
+    }
+
+    .table-responsive {
+        max-height: 700px;
+        border-radius: 0 0 8px 8px;
+    }
+
+    .btn-group form {
+        margin-right: 5px;
+    }
+
+        .btn-group form:last-child {
+            margin-right: 0;
+        }
+
+    .table thead th {
+        white-space: normal;
+        vertical-align: top;
+        border-top: none !important;
+    }
+
+    .table-bordered > :not(caption) > * > * {
+        border-width: 1px;
+        border-color: #dee2e6;
+    }
+</style>
+
+@if (Model.Rows != null && Model.Rows.Any())
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Dữ liệu cho biểu đồ tròn (Pie/Doughnut Chart)
+            const ctxPie = document.getElementById('pieChart').getContext('2d');
+            const totalAttended = @totalAttended;
+            const totalAbsent = @totalPossible - totalAttended;
+
+            new Chart(ctxPie, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Tham gia', 'Vắng/Không tham gia'],
+                    datasets: [{
+                        data: [totalAttended, totalAbsent],
+                        backgroundColor: ['#198754', '#dc3545'],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        });
+    </script>
+}

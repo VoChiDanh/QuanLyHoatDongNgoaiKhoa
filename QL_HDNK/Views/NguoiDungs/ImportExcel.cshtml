@@ -1,0 +1,63 @@
+@{
+    ViewBag.Title = "Đồng bộ hồ sơ sinh viên";
+}
+
+<div class="container-fluid py-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="@Url.Action("Index")">Danh sách người dùng</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Đồng bộ hồ sơ</li>
+                </ol>
+            </nav>
+
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white py-3">
+                    <h5 class="card-title mb-0">Đồng bộ hồ sơ sinh viên từ Excel</h5>
+                </div>
+                <div class="card-body p-4">
+                    @using (Html.BeginForm("ImportExcel", "NguoiDungs", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger mb-3" })
+
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Chọn file Excel (.xlsx, .xls)</label>
+                            <input type="file" name="file" class="form-control form-control-lg" accept=".xlsx, .xls" required />
+                            <div class="form-text mt-2">
+                                File Excel cần có cấu trúc 5 cột: 
+                                <span class="badge bg-light text-dark border">Mã SV</span>
+                                <span class="badge bg-light text-dark border">Họ tên</span>
+                                <span class="badge bg-light text-dark border">Ngày sinh</span>
+                                <span class="badge bg-light text-dark border">Email</span>
+                                <span class="badge bg-light text-dark border">Mã lớp</span>
+                            </div>
+                        </div>
+
+                        <div class="card bg-light border-0 mb-4">
+                            <div class="card-body">
+                                <h6 class="fw-bold text-info mb-2">Quy tắc đồng bộ:</h6>
+                                <ul class="small mb-0">
+                                    <li>Dựa vào <strong>Mã sinh viên</strong> để xác định đối tượng.</li>
+                                    <li>Nếu đã tồn tại: Cập nhật thông tin (Họ tên, Ngày sinh, Email, Lớp).</li>
+                                    <li>Nếu chưa tồn tại: Tạo tài khoản mới, mật khẩu mặc định là Mã sinh viên.</li>
+                                    <li>Dòng đầu tiên của file Excel sẽ được coi là tiêu đề và bị bỏ qua.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary px-4">
+                                Bắt đầu đồng bộ
+                            </button>
+                            <a href="@Url.Action("Index")" class="btn btn-outline-secondary px-4">
+                                Hủy bỏ
+                            </a>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

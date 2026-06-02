@@ -1,0 +1,229 @@
+@model IEnumerable<QL_HDNK.Models.DangKy_DiemDanh>
+@using System.Linq
+
+@{
+    ViewBag.Title = "Đăng ký - điểm danh";
+    // Gom nhóm dữ liệu theo Sự Kiện
+    var groupedData = Model.GroupBy(x => x.SuKien).ToList();
+}
+
+<main class="module-page">
+    <div class="page-heading mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <span class="text-muted" style="font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px;">Quản lý hoạt động</span>
+                <h2 class="mt-1">Điểm danh sự kiện</h2>
+                <p class="text-secondary">Duyệt minh chứng và điểm danh sinh viên theo từng sự kiện.</p>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Bộ lọc tìm kiếm -->
+    <section class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+            @using (Html.BeginForm("Index", "DangKy_DiemDanh", FormMethod.Get, new { id = "filterForm" }))
+            {
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Tìm sinh viên</label>
+                        <input type="text" name="search" value="@ViewBag.CurrentSearch" class="form-control" placeholder="Mã SV, Họ tên..." />
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Lọc theo sự kiện</label>
+                        @Html.DropDownList("maSuKien", (SelectList)ViewBag.MaSuKien, "-- Tất cả sự kiện --", new { @class = "form-select" })
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-bold">Trạng thái điểm danh</label>
+                        @Html.DropDownList("maTTDD", (SelectList)ViewBag.MaTTDD, "-- Tất cả --", new { @class = "form-select" })
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-50 me-1">Tìm</button>
+                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary w-50">Xóa</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["Message"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- HIỂN THỊ DANH SÁCH THEO TỪNG SỰ KIỆN -->
+    @if (!groupedData.Any())
+    {
+        <div class="alert alert-info text-center">Không có dữ liệu đăng ký/điểm danh nào phù hợp.</div>
+    }
+    else
+    {
+        foreach (var group in groupedData)
+        {
+            var suKien = group.Key;
+            var tenSuKien = suKien != null ? suKien.TenSuKien : "Sự kiện không xác định";
+            var maSuKien = suKien != null ? suKien.MaSuKien : "";
+            var thoiGian = suKien != null ? suKien.ThoiGianBatDau.ToString("dd/MM/yyyy HH:mm") : "";
+
+            <div class="card shadow-sm mb-5 border-0">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center py-3">
+                    <h5 class="mb-0 text-primary fw-bold">
+                        <i class="bi bi-calendar-event me-2"></i> @tenSuKien
+                    </h5>
+                    @if (!string.IsNullOrEmpty(thoiGian))
+                    {
+                        <span class="badge bg-secondary">Bắt đầu: @thoiGian</span>
+                    }
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Sinh viên</th>
+                                <th>Thông tin Đăng ký</th>
+                                <th>Trạng thái Điểm danh</th>
+                                <th>Minh chứng QR</th>
+                                <th>Ghi chú</th>
+                                <th>Người duyệt</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in group)
+                            {
+                                var attendanceName = item.TrangThaiDiemDanh != null ? item.TrangThaiDiemDanh.TenTTDD : "";
+                                var note = item.GhiChu ?? "";
+                                var evidenceImage = !string.IsNullOrWhiteSpace(item.MinhChung) && item.MinhChung.StartsWith("QRPHOTO:") ? item.MinhChung.Substring("QRPHOTO:".Length) : "";
+                                var isRejected = attendanceName.Contains("Từ chối") || attendanceName.Contains("từ chối") || note.Contains("Từ chối") || note.Contains("từ chối");
+                                var isPendingQr = !isRejected && (attendanceName.Contains("Chờ duyệt") || attendanceName.Contains("Minh chứng") || (!string.IsNullOrWhiteSpace(item.MinhChung) && (item.MinhChung.StartsWith("QR:") || item.MinhChung.StartsWith("QRPHOTO:")) && item.ThoiGianDiemDanh == null));
+
+                                <tr id="dk-@item.MaDangKy">
+                                    <td>
+                                        <div class="fw-bold">@(item.NguoiDung != null ? item.NguoiDung.HoTen : "Chưa có tên")</div>
+                                        <div class="text-muted" style="font-size: 0.85em;">Mã SV: @(item.NguoiDung != null ? item.NguoiDung.MaSinhVien : item.MaNguoiDung)</div>
+                                    </td>
+                                    <td>
+                                        <div>@item.ThoiGianDangKy.ToString("dd/MM/yyyy HH:mm")</div>
+                                        <span class="badge bg-info text-dark">@(item.TrangThaiDangKy != null ? item.TrangThaiDangKy.TenTTDK : "Đã đăng ký")</span>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold @(item.ThoiGianDiemDanh.HasValue ? "text-success" : "")">
+                                            @(item.ThoiGianDiemDanh.HasValue ? item.ThoiGianDiemDanh.Value.ToString("dd/MM/yyyy HH:mm") : "Chưa ghi nhận")
+                                        </div>
+                                        <span class="badge @(isPendingQr ? "bg-warning text-dark" : "bg-secondary")">@(item.TrangThaiDiemDanh != null ? item.TrangThaiDiemDanh.TenTTDD : "Chưa điểm danh")</span>
+                                    </td>
+                                    <td>
+                                        @if (!string.IsNullOrWhiteSpace(evidenceImage))
+                                        {
+                                            <a href="@evidenceImage" target="_blank" class="btn btn-sm btn-outline-info"><i class="bi bi-image"></i> Xem ảnh</a>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted" style="font-size: 0.85em;">@item.MinhChung</span>
+                                        }
+                                    </td>
+                                    <td style="max-width: 200px; white-space: normal;">
+                                        <small class="text-muted">@item.GhiChu</small>
+                                    </td>
+                                    <td>
+                                        @if (item.ThoiGianDuyet.HasValue)
+                                        {
+                                            <div>@(item.NguoiDung1 != null ? item.NguoiDung1.MaSinhVien : "Hệ thống")</div>
+                                            <small class="text-muted">@item.ThoiGianDuyet.Value.ToString("dd/MM/yyyy HH:mm")</small>
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="d-flex gap-1 flex-wrap">
+                                            @if (isPendingQr)
+                                            {
+                                                // TRƯỜNG HỢP 1: Đã nộp minh chứng -> Hiện nút Duyệt / Từ chối
+                                                using (Html.BeginForm("DuyetQr", "DangKy_DiemDanh", new { id = item.MaDangKy }, FormMethod.Post, new { @class = "m-0" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-success btn-sm" title="Duyệt"><i class="bi bi-check-lg"></i> Duyệt</button>
+                                                }
+                                                using (Html.BeginForm("TuChoiQr", "DangKy_DiemDanh", new { id = item.MaDangKy }, FormMethod.Post, new { @class = "m-0" }))
+                                                {
+                                                    @Html.AntiForgeryToken()
+                                                    <button type="submit" class="btn btn-danger btn-sm" title="Từ chối"><i class="bi bi-x-lg"></i>Từ chối</button>
+                                                }
+                                            }
+                                            else if (!item.ThoiGianDiemDanh.HasValue)
+                                            {
+                                                // TRƯỜNG HỢP 2: Chưa điểm danh, cũng chưa nộp minh chứng -> Hiện nút Điểm danh thủ công
+                                                <button type="button" class="btn btn-outline-success btn-sm btn-open-modal"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#diemDanhModal"
+                                                        data-id="@item.MaDangKy"
+                                                        data-name="@(item.NguoiDung != null ? item.NguoiDung.HoTen : item.MaNguoiDung)">
+                                                    Điểm danh
+                                                </button>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    }
+
+    <!-- MODAL HIỂN THỊ ĐỂ TẢI ẢNH LÊN -->
+    <div class="modal fade" id="diemDanhModal" tabindex="-1" aria-labelledby="diemDanhModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                @using (Html.BeginForm("DiemDanhThuCong", "DangKy_DiemDanh", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title" id="diemDanhModalLabel">Điểm danh thủ công</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-light border">
+                            Đang điểm danh cho: <br />
+                            <strong id="studentNameModal" class="text-success fs-5"></strong>
+                        </div>
+
+                        <input type="hidden" name="id" id="maDangKyInput" value="" />
+
+                        <div class="mb-3">
+                            <label for="fileMinhChung" class="form-label fw-bold">Ảnh minh chứng <span class="text-danger">*</span></label>
+                            <input type="file" class="form-control" name="fileMinhChung" id="fileMinhChung" accept="image/*" required />
+                            <small class="text-muted d-block mt-1">Vui lòng tải lên hình ảnh chụp sinh viên tham gia sự kiện.</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer bg-light">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy thao tác</button>
+                        <button type="submit" class="btn btn-success"><i class="bi bi-cloud-arrow-up"></i> Xác nhận & Lưu ảnh</button>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Xử lý nạp dữ liệu vào Modal khi nhấn nút Điểm danh
+            const modalButtons = document.querySelectorAll('.btn-open-modal');
+
+            modalButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const maDangKy = this.getAttribute('data-id');
+                    const studentName = this.getAttribute('data-name');
+
+                    document.getElementById('maDangKyInput').value = maDangKy;
+                    document.getElementById('studentNameModal').textContent = studentName;
+                });
+            });
+        });
+    </script>
+}

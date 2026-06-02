@@ -1,0 +1,48 @@
+﻿@model IEnumerable<QL_HDNK.Models.LopHoc>
+
+@{
+    ViewBag.Title = "Danh sách";
+}
+
+<h2>Danh sách</h2>
+
+<p>
+    @Html.ActionLink("Thêm mới", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.TenLop)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.KhoaHoc)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Khoa.TenKhoa)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.TenLop)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.KhoaHoc)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Khoa.TenKhoa)
+        </td>
+        <td>
+            @Html.ActionLink("Sửa", "Edit", new { id=item.MaLop }) |
+            @Html.ActionLink("Chi tiết", "Details", new { id=item.MaLop }) |
+            @Html.ActionLink("Xóa", "Delete", new { id=item.MaLop })
+        </td>
+    </tr>
+}
+
+</table>
+
+
+

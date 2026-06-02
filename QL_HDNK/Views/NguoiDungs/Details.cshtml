@@ -1,0 +1,77 @@
+﻿@model QL_HDNK.Models.NguoiDung
+
+@{
+    ViewBag.Title = "Chi tiết";
+}
+
+<h2>Chi tiết</h2>
+
+<div>
+    <h4>Người dùng</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.MaSinhVien)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MaSinhVien)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MatKhau)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MatKhau)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.HoTen)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.HoTen)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.NgaySinh)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.NgaySinh)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.LopHoc.TenLop)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.LopHoc.TenLop)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.QuyenHan.TenQuyen)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.QuyenHan.TenQuyen)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Sửa", "Edit", new { id = Model.MaNguoiDung }) |
+    @Html.ActionLink("Quay lại danh sách", "Index")
+</p>
+
+
+

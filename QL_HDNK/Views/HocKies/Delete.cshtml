@@ -1,0 +1,51 @@
+﻿@model QL_HDNK.Models.HocKy
+
+@{
+    ViewBag.Title = "Xóa";
+}
+
+<h2>Xóa</h2>
+
+<h3>Bạn có chắc chắn muốn xóa bản ghi này không?</h3>
+<div>
+    <h4>Học kỳ</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.TenHocKy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TenHocKy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.TuNgay)
+        </dt>
+
+        <dd>
+            @(Model.TuNgay.HasValue ? Model.TuNgay.Value.ToString("dd/MM/yyyy") : "-")
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DenNgay)
+        </dt>
+
+        <dd>
+            @(Model.DenNgay.HasValue ? Model.DenNgay.Value.ToString("dd/MM/yyyy") : "-")
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Xóa" class="btn btn-default" /> |
+            @Html.ActionLink("Quay lại danh sách", "Index")
+        </div>
+    }
+</div>
+
+
+

@@ -1,0 +1,69 @@
+﻿@{
+    ViewBag.Title = "Tổng quan";
+}
+
+<main class="home-page">
+    <section class="home-hero" aria-labelledby="homeTitle">
+        <div>
+            <span class="eyebrow">Hệ thống Quản lý hoạt động ngoại khóa</span>
+            <h1 id="homeTitle">Quản lý hoạt động ngoại khóa tập trung, rõ ràng và dễ theo dõi.</h1>
+            <p class="lead">Theo dõi sự kiện, đăng ký, điểm danh và điểm rèn luyện sinh viên trong một giao diện quản trị thống nhất.</p>
+            <div class="hero-actions">
+                @Html.ActionLink("Quản lý sự kiện", "Index", "SuKiens", null, new { @class = "btn btn-primary btn-lg" })
+                @Html.ActionLink("Xem đăng ký", "Index", "DangKy_DiemDanh", null, new { @class = "btn btn-outline-light btn-lg" })
+            </div>
+        </div>
+        <div class="hero-panel" aria-label="Tóm tắt nghiệp vụ">
+            <div class="hero-panel-row">
+                <span>Quy trình</span>
+                <strong>Tạo sự kiện - Đăng ký - Điểm danh - Chấm điểm</strong>
+            </div>
+            <div class="hero-panel-row">
+                <span>Dữ liệu chính</span>
+                <strong>Sinh viên, lớp, khoa, học kỳ, năm học</strong>
+            </div>
+            <div class="hero-panel-row">
+                <span>Quản trị</span>
+                <strong>Phân quyền, trạng thái, nhật ký hệ thống</strong>
+            </div>
+        </div>
+    </section>
+
+    <section class="quick-grid" aria-label="Truy cập nhanh">
+        <a class="quick-tile" href="@Url.Action("Index", "SuKiens")">
+            <span class="quick-icon">SK</span>
+            <strong>Sự kiện</strong>
+            <small>Lập lịch, cập nhật trạng thái và sức chứa.</small>
+        </a>
+        <a class="quick-tile" href="@Url.Action("Index", "NguoiDungs")">
+            <span class="quick-icon">ND</span>
+            <strong>Người dùng</strong>
+            <small>Quản lý sinh viên, lớp và quyền truy cập.</small>
+        </a>
+        <a class="quick-tile" href="@Url.Action("Index", "DangKy_DiemDanh")">
+            <span class="quick-icon">DD</span>
+            <strong>Đăng ký - điểm danh</strong>
+            <small>Theo dõi tham gia và kết quả điểm danh.</small>
+        </a>
+        <a class="quick-tile" href="@Url.Action("Index", "DanhMucDiems")">
+            <span class="quick-icon">DR</span>
+            <strong>Điểm rèn luyện</strong>
+            <small>Quản lý danh mục và mức điểm áp dụng.</small>
+        </a>
+    </section>
+
+    <section class="content-band">
+        <div>
+            <span class="eyebrow">Điều hành hằng ngày</span>
+            <h2>Các module được gom về một layout quản trị thống nhất.</h2>
+            <p>Sidebar bên trái mở nhanh đến toàn bộ bảng dữ liệu. Các trang danh sách, thêm, sửa, chi tiết và xóa dùng chung khung hiển thị để nhìn gọn và nhất quán hơn.</p>
+        </div>
+        <div class="workflow-list">
+            <div><span>01</span> Tạo năm học, học kỳ, khoa và lớp học.</div>
+            <div><span>02</span> Tạo người dùng và phân quyền phù hợp.</div>
+            <div><span>03</span> Lập sự kiện, mở đăng ký và điểm danh.</div>
+            <div><span>04</span> Tổng hợp điểm rèn luyện và nhật ký hệ thống.</div>
+        </div>
+    </section>
+</main>
+

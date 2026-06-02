@@ -1,0 +1,471 @@
+@using System.Linq
+@model QL_HDNK.Models.FacultyReportViewModel
+
+@{
+    ViewBag.Title = "Báo cáo toàn khoa";
+    var isPercent = Model.CheDo == "phan-tram";
+    var maxCellValue = Model.Rows
+        .SelectMany(r => r.Cells)
+        .Select(c => isPercent ? (double)c.TyLeThamGia : c.SoLuongThamGia)
+        .DefaultIfEmpty(0)
+        .Max();
+}
+
+<style>
+    .faculty-report {
+        display: grid;
+        gap: 18px;
+    }
+
+    .report-hero {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        align-items: flex-end;
+        padding: 24px;
+        border: 1px solid #dce3ea;
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 16px 35px rgba(23, 32, 42, .08);
+    }
+
+    .report-hero h1 {
+        margin: 0 0 8px;
+        font-size: 30px;
+        line-height: 1.15;
+    }
+
+    .report-hero p {
+        margin: 0;
+        color: #657282;
+    }
+
+    .report-command {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px;
+        border: 1px solid #dce3ea;
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 12px 30px rgba(23, 32, 42, .08);
+    }
+
+    .report-command .btn {
+        min-height: 38px;
+    }
+
+    .report-filter {
+        display: grid;
+        grid-template-columns: minmax(180px, 1.2fr) minmax(150px, .8fr) minmax(150px, .8fr) auto;
+        gap: 12px;
+        align-items: end;
+        padding: 18px;
+        border: 1px solid #dce3ea;
+        border-radius: 8px;
+        background: #ffffff;
+    }
+
+    .report-filter .form-control {
+        max-width: none;
+    }
+
+    .mode-toggle {
+        display: inline-flex;
+        gap: 6px;
+        padding: 4px;
+        border: 1px solid #dce3ea;
+        border-radius: 8px;
+        background: #eef3f8;
+    }
+
+    .mode-toggle .btn {
+        border: 0;
+        box-shadow: none;
+    }
+
+    .report-kpis {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .report-kpi {
+        padding: 18px;
+        border: 1px solid #dce3ea;
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 10px 28px rgba(23, 32, 42, .05);
+    }
+
+    .report-kpi span {
+        display: block;
+        color: #657282;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .report-kpi strong {
+        display: block;
+        margin-top: 8px;
+        color: #123f69;
+        font-size: 30px;
+        line-height: 1;
+    }
+
+    .report-section-title {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        margin: 4px 0 -4px;
+    }
+
+    .report-section-title h2 {
+        margin: 0;
+        font-size: 22px;
+    }
+
+    .event-chart-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .event-chart-card {
+        padding: 18px;
+        border: 1px solid #dce3ea;
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 10px 28px rgba(23, 32, 42, .05);
+    }
+
+    .event-chart-card h3 {
+        margin: 0 0 4px;
+        font-size: 18px;
+        line-height: 1.25;
+    }
+
+    .event-chart-card small {
+        display: block;
+        margin-bottom: 14px;
+        color: #657282;
+        font-weight: 700;
+    }
+
+    .bar-list {
+        display: grid;
+        gap: 10px;
+    }
+
+    .bar-row {
+        display: grid;
+        grid-template-columns: 120px minmax(140px, 1fr) 72px;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .bar-row-label {
+        min-width: 0;
+        color: #314055;
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .bar-track {
+        height: 18px;
+        border-radius: 999px;
+        background: #eef3f8;
+        overflow: hidden;
+        box-shadow: inset 0 0 0 1px #dce3ea;
+    }
+
+    .bar-fill {
+        display: block;
+        min-width: 2px;
+        height: 100%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #1864ab, #0f766e);
+    }
+
+    .bar-value {
+        color: #17202a;
+        font-size: 13px;
+        font-weight: 800;
+        text-align: right;
+    }
+
+    .matrix-panel {
+        border: 1px solid #dce3ea;
+        border-radius: 8px;
+        background: #ffffff;
+        box-shadow: 0 16px 35px rgba(23, 32, 42, .08);
+        overflow: hidden;
+    }
+
+    .matrix-scroll {
+        overflow: auto;
+        max-height: 68vh;
+    }
+
+    .report-matrix {
+        width: 100%;
+        min-width: 980px;
+        margin: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+        box-shadow: none;
+        border: 0;
+    }
+
+    .report-matrix th,
+    .report-matrix td {
+        border-bottom: 1px solid #edf1f5;
+        border-right: 1px solid #edf1f5;
+        padding: 12px;
+        vertical-align: middle;
+    }
+
+    .report-matrix th {
+        position: sticky;
+        top: 0;
+        z-index: 3;
+        min-width: 150px;
+        color: #314055;
+        background: #eef3f8;
+        font-size: 12px;
+        text-transform: uppercase;
+        white-space: normal;
+    }
+
+    .report-matrix th:first-child,
+    .report-matrix td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 4;
+        min-width: 160px;
+        background: #ffffff;
+        font-weight: 800;
+    }
+
+    .report-matrix th:first-child {
+        background: #e8f1fb;
+    }
+
+    .report-matrix th small {
+        display: block;
+        margin-top: 5px;
+        color: #657282;
+        font-weight: 700;
+        text-transform: none;
+    }
+
+    .heat-cell {
+        min-width: 110px;
+        text-align: center;
+        font-weight: 800;
+        color: #123f69;
+    }
+
+    .heat-cell span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 68px;
+        min-height: 34px;
+        padding: 6px 10px;
+        border-radius: 8px;
+        background: rgba(24, 100, 171, var(--heat));
+        box-shadow: inset 0 0 0 1px rgba(18, 63, 105, .12);
+    }
+
+    .empty-report {
+        padding: 28px;
+        border: 1px dashed #b9c6d4;
+        border-radius: 8px;
+        color: #657282;
+        background: #ffffff;
+        text-align: center;
+        font-weight: 700;
+    }
+
+    @@media (max-width: 1100px) {
+        .report-filter,
+        .event-chart-grid,
+        .report-kpis {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    @@media (max-width: 760px) {
+        .report-hero,
+        .report-command {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .report-filter,
+        .event-chart-grid,
+        .report-kpis {
+            grid-template-columns: 1fr;
+        }
+
+        .bar-row {
+            grid-template-columns: 88px minmax(100px, 1fr) 56px;
+        }
+    }
+
+    .action-strip {
+        display: flex;
+        gap: 8px;
+    }
+</style>
+
+<main class="faculty-report">
+    <section class="report-hero">
+        <div>
+            <h1>Báo cáo tham gia hoạt động toàn khoa</h1>
+            <p>@Model.TenKhoa - ma trận lớp theo sự kiện, hỗ trợ số lượng và tỷ lệ tham gia.</p>
+        </div>
+        <div class="mode-toggle" role="group" aria-label="Chuyển chế độ hiển thị">
+            @Html.ActionLink("Số lượng", "ToanKhoa", "BaoCaos", new { maKhoa = Model.MaKhoa, maNamHoc = Model.MaNamHoc, maHocKy = Model.MaHocKy, cheDo = "so-luong" }, new { @class = "btn " + (Model.CheDo == "so-luong" ? "btn-primary" : "btn-secondary") })
+            @Html.ActionLink("% tham gia", "ToanKhoa", "BaoCaos", new { maKhoa = Model.MaKhoa, maNamHoc = Model.MaNamHoc, maHocKy = Model.MaHocKy, cheDo = "phan-tram" }, new { @class = "btn " + (Model.CheDo == "phan-tram" ? "btn-primary" : "btn-secondary") })
+        </div>
+    </section>
+
+    <section class="report-command">
+        <strong>Kết xuất báo cáo</strong>
+        <div class="action-strip">
+            @using (Html.BeginForm("ExportFaculty", "BaoCaos", FormMethod.Post))
+            {
+                @Html.HiddenFor(m => m.MaKhoa)
+                @Html.HiddenFor(m => m.MaNamHoc)
+                @Html.HiddenFor(m => m.MaHocKy)
+                @Html.HiddenFor(m => m.CheDo)
+                <input type="hidden" name="format" value="excel" />
+                <button type="submit" class="btn btn-success">Xuất Excel</button>
+            }
+            @using (Html.BeginForm("ExportFaculty", "BaoCaos", FormMethod.Post))
+            {
+                @Html.HiddenFor(m => m.MaKhoa)
+                @Html.HiddenFor(m => m.MaNamHoc)
+                @Html.HiddenFor(m => m.MaHocKy)
+                @Html.HiddenFor(m => m.CheDo)
+                <input type="hidden" name="format" value="pdf" />
+                <button type="submit" class="btn btn-danger">Xuất PDF</button>
+            }
+        </div>
+    </section>
+
+    @using (Html.BeginForm("ToanKhoa", "BaoCaos", FormMethod.Get, new { @class = "report-filter" }))
+    {
+        <div class="form-group">
+            <label class="control-label">Khoa</label>
+            @Html.DropDownList("maKhoa", Model.KhoaList, new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            <label class="control-label">Năm học</label>
+            @Html.DropDownList("maNamHoc", Model.NamHocList, "Tất cả", new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            <label class="control-label">Học kỳ</label>
+            @Html.DropDownList("maHocKy", Model.HocKyList, "Tất cả", new { @class = "form-control" })
+        </div>
+        <input type="hidden" name="cheDo" value="@Model.CheDo" />
+        <button type="submit" class="btn btn-primary">Tính toán</button>
+    }
+
+    <section class="report-kpis">
+        <div class="report-kpi"><span>Lớp</span><strong>@Model.TotalClasses</strong></div>
+        <div class="report-kpi"><span>Sinh viên</span><strong>@Model.TotalStudents</strong></div>
+        <div class="report-kpi"><span>Sự kiện</span><strong>@Model.TotalEvents</strong></div>
+        <div class="report-kpi"><span>Lượt tham gia</span><strong>@Model.TotalAttendances</strong></div>
+    </section>
+
+    @if (!Model.Events.Any())
+    {
+        <div class="empty-report">Chưa có sự kiện phù hợp với bộ lọc hiện tại.</div>
+    }
+    else
+    {
+        <div class="report-section-title">
+            <h2>Biểu đồ cột theo sự kiện</h2>
+            <span class="status-pill muted">@(isPercent ? "% tham gia" : "Số lượng tham gia")</span>
+        </div>
+
+        <section class="event-chart-grid">
+            @foreach (var ev in Model.Events)
+            {
+                var values = Model.Rows
+                    .Select(r => r.Cells.FirstOrDefault(c => c.MaSuKien == ev.MaSuKien))
+                    .Where(c => c != null)
+                    .Select(c => isPercent ? (double)c.TyLeThamGia : c.SoLuongThamGia)
+                    .ToList();
+                var maxValue = values.DefaultIfEmpty(0).Max();
+
+                <article class="event-chart-card">
+                    <h3>@ev.TenSuKien</h3>
+                    <small>@ev.ThoiGianText@(ev.LaSuKienCha ? " · gom " + ev.SoSuKienCon + " sự kiện con" : "")</small>
+                    <div class="bar-list">
+                        @foreach (var row in Model.Rows)
+                        {
+                            var cell = row.Cells.FirstOrDefault(c => c.MaSuKien == ev.MaSuKien);
+                            var value = cell == null ? 0 : (isPercent ? (double)cell.TyLeThamGia : cell.SoLuongThamGia);
+                            var width = maxValue <= 0 ? 0 : System.Math.Round(value * 100 / maxValue, 1);
+                            <div class="bar-row">
+                                <span class="bar-row-label" title="@row.TenLop">@row.TenLop</span>
+                                <span class="bar-track"><i class="bar-fill" style="width:@width%"></i></span>
+                                <span class="bar-value">@(isPercent ? value.ToString("0.0") + "%" : value.ToString("0"))</span>
+                            </div>
+                        }
+                    </div>
+                </article>
+            }
+        </section>
+
+        <div class="report-section-title">
+            <h2>Ma trận kết quả</h2>
+        </div>
+
+        <section class="matrix-panel">
+            <div class="matrix-scroll">
+                <table class="report-matrix">
+                    <tr>
+                        <th>Lớp</th>
+                        <th>Khóa</th>
+                        <th>Sĩ số</th>
+                        @foreach (var ev in Model.Events)
+                        {
+                            <th>@ev.TenSuKien<small>@ev.ThoiGianText@(ev.LaSuKienCha ? " · gom " + ev.SoSuKienCon + " sự kiện con" : "")</small></th>
+                        }
+                    </tr>
+                    @foreach (var row in Model.Rows)
+                    {
+                        <tr>
+                            <td>@row.TenLop</td>
+                            <td>@row.KhoaHoc</td>
+                            <td>@row.SiSo</td>
+                            @foreach (var cell in row.Cells)
+                            {
+                                var raw = isPercent ? (double)cell.TyLeThamGia : cell.SoLuongThamGia;
+                                var heat = maxCellValue <= 0 ? 0.06 : 0.06 + (raw / maxCellValue * 0.42);
+                                var heatText = heat.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture);
+                                <td class="heat-cell">
+                                    <span style="--heat:@heatText">
+                                        @(isPercent ? cell.TyLeThamGia.ToString("0.0") + "%" : cell.SoLuongThamGia.ToString())
+                                    </span>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </table>
+            </div>
+        </section>
+    }
+</main>

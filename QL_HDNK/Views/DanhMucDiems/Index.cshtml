@@ -1,0 +1,54 @@
+﻿@model IEnumerable<QL_HDNK.Models.DanhMucDiem>
+
+@{
+    ViewBag.Title = "Danh sách";
+}
+
+<h2>Danh sách</h2>
+
+<p>
+    @Html.ActionLink("Thêm mới", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.TenDanhMuc)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DiemToiDa)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.GhiChu)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DanhMucDiem2.TenDanhMuc)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.TenDanhMuc)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DiemToiDa)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.GhiChu)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DanhMucDiem2.TenDanhMuc)
+        </td>
+        <td>
+            @Html.ActionLink("Sửa", "Edit", new { id=item.MaDanhMuc }) |
+            @Html.ActionLink("Chi tiết", "Details", new { id=item.MaDanhMuc }) |
+            @Html.ActionLink("Xóa", "Delete", new { id=item.MaDanhMuc })
+        </td>
+    </tr>
+}
+
+</table>
+
+
+

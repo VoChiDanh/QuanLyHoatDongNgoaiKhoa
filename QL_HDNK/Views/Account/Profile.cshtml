@@ -1,0 +1,77 @@
+@model QL_HDNK.Models.ProfileViewModel
+
+@{
+    ViewBag.Title = "Tài khoản";
+}
+
+<main class="module-page">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">Tài khoản</span>
+            <h1>Thông tin cá nhân</h1>
+            <p>Cập nhật thông tin liên hệ, ngày sinh, lớp và mật khẩu đăng nhập.</p>
+        </div>
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success">@TempData["Message"]</div>
+    }
+
+    @using (Html.BeginForm("Profile", "Account", FormMethod.Post, new { @class = "form-horizontal" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        <div class="form-grid">
+            <div class="form-group">
+                @Html.LabelFor(model => model.MaSinhVien, htmlAttributes: new { @class = "control-label" })
+                @Html.TextBoxFor(model => model.MaSinhVien, new { @class = "form-control", @readonly = "readonly" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.HoTen, htmlAttributes: new { @class = "control-label required" })
+                @Html.TextBoxFor(model => model.HoTen, new { @class = "form-control", required = "required", autocomplete = "name" })
+                @Html.ValidationMessageFor(model => model.HoTen, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label required" })
+                @Html.TextBoxFor(model => model.Email, new { @class = "form-control", required = "required", type = "email", autocomplete = "email" })
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.NgaySinh, htmlAttributes: new { @class = "control-label" })
+                @Html.TextBoxFor(model => model.NgaySinh, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                @Html.ValidationMessageFor(model => model.NgaySinh, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.MaLop, htmlAttributes: new { @class = "control-label" })
+                @Html.DropDownList("MaLop", null, "Chọn lớp", htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.MaLop, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.MatKhauMoi, htmlAttributes: new { @class = "control-label" })
+                @Html.PasswordFor(model => model.MatKhauMoi, new { @class = "form-control", autocomplete = "new-password" })
+                @Html.ValidationMessageFor(model => model.MatKhauMoi, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.XacNhanMatKhauMoi, htmlAttributes: new { @class = "control-label" })
+                @Html.PasswordFor(model => model.XacNhanMatKhauMoi, new { @class = "form-control", autocomplete = "new-password" })
+                @Html.ValidationMessageFor(model => model.XacNhanMatKhauMoi, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+        </div>
+    }
+</main>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

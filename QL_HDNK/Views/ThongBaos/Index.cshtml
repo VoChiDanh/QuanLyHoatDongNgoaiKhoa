@@ -1,0 +1,89 @@
+﻿@model IEnumerable<QL_HDNK.Models.ThongBaoViewModel>
+
+@{
+    ViewBag.Title = "Thông báo";
+    var actionableEventIds = ViewBag.ActionableEventIds as System.Collections.Generic.IEnumerable<string> ?? new string[0];
+    var actionableAttendanceIds = ViewBag.ActionableAttendanceIds as System.Collections.Generic.IEnumerable<string> ?? new string[0];
+}
+
+<main class="module-page">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">Thông báo</span>
+            <h1>Thông báo</h1>
+            <p>Theo dõi sự kiện, minh chứng điểm danh và nhắc lịch sự kiện.</p>
+        </div>
+        @using (Html.BeginForm("MarkAllRead", "ThongBaos", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-secondary">Đánh dấu đã đọc</button>
+        }
+    </div>
+
+    <section class="notification-list">
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <h2>Chưa có thông báo</h2>
+                <p>Các cập nhật về sự kiện, minh chứng điểm danh sẽ xuất hiện tại đây</p>
+            </div>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                var canApproveEvent = item.Loai == "EVENT_APPROVAL_NEEDED" && System.Linq.Enumerable.Contains(actionableEventIds, item.MaLienQuan);
+                var canApproveAttendance = item.Loai == "ATTENDANCE_PENDING" && System.Linq.Enumerable.Contains(actionableAttendanceIds, item.MaLienQuan);
+
+                <article class="notification-item @(item.DaDoc ? "read" : "unread")">
+                    <div>
+                        <strong>@item.TieuDe</strong>
+                        <p>@item.NoiDung</p>
+                        <span>@item.ThoiGianTao.ToString("dd/MM/yyyy HH:mm")</span>
+                    </div>
+                    <div class="notification-actions">
+                        @if (canApproveEvent)
+                        {
+                            using (Html.BeginForm("Duyet", "SuKiens", new { id = item.MaLienQuan }, FormMethod.Post, new { @class = "inline-form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-primary btn-sm">Duyệt</button>
+                            }
+                            using (Html.BeginForm("TuChoi", "SuKiens", new { id = item.MaLienQuan }, FormMethod.Post, new { @class = "inline-form notification-reject-form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <input type="text" name="lyDo" class="form-control form-control-sm" placeholder="Lý do từ chối" />
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Từ chối</button>
+                            }
+                        }
+                        @if (canApproveAttendance)
+                        {
+                            using (Html.BeginForm("DuyetQr", "DangKy_DiemDanh", new { id = item.MaLienQuan }, FormMethod.Post, new { @class = "inline-form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-primary btn-sm">Duyệt minh chứng</button>
+                            }
+                            using (Html.BeginForm("TuChoiQr", "DangKy_DiemDanh", new { id = item.MaLienQuan }, FormMethod.Post, new { @class = "inline-form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Từ chối</button>
+                            }
+                        }
+                        @if (!string.IsNullOrWhiteSpace(item.DuongDan))
+                        {
+                            <a class="btn btn-primary btn-sm" href="@item.DuongDan">Mở</a>
+                        }
+                        @if (!item.DaDoc)
+                        {
+                            using (Html.BeginForm("MarkRead", "ThongBaos", new { id = item.MaThongBao }, FormMethod.Post, new { @class = "inline-form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-secondary btn-sm">Đã đọc</button>
+                            }
+                        }
+                    </div>
+                </article>
+            }
+        }
+    </section>
+</main>

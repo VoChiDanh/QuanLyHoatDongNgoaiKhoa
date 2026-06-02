@@ -1,0 +1,186 @@
+@model IEnumerable<QL_HDNK.Models.SuKien>
+@using System.Collections.Generic
+@using System.Linq
+
+@{
+    ViewBag.Title = "Tra cứu sự kiện";
+    var registeredEventIds = ViewBag.RegisteredEventIds as List<string> ?? new List<string>();
+    var attendedEventIds = ViewBag.AttendedEventIds as List<string> ?? new List<string>();
+    var currentFilter = (ViewBag.Loc as string) ?? "tat-ca";
+    var now = DateTime.Now;
+    var eventSections = new List<Tuple<string, string, List<QL_HDNK.Models.SuKien>>>
+    {
+        Tuple.Create("Sự kiện đã đăng ký", "Theo dõi các sự kiện bạn đã đăng ký hoặc đang chờ điểm danh.", Model.Where(x => registeredEventIds.Contains(x.MaSuKien)).OrderBy(x => x.ThoiGianBatDau).ToList()),
+        Tuple.Create("Sự kiện đang/sắp diễn ra", "Các sự kiện còn thời gian tham gia đăng ký.", Model.Where(x => !registeredEventIds.Contains(x.MaSuKien) && !x.TrangThaiSuKien.TenTTSK.ToLower().Contains("kết thúc")).OrderBy(x => x.ThoiGianBatDau).ToList()),
+        Tuple.Create("Sự kiện đã kết thúc", "Các sự kiện đã qua để tra cứu lại thông tin.", Model.Where(x => !registeredEventIds.Contains(x.MaSuKien) && x.TrangThaiSuKien.TenTTSK.ToLower().Contains("kết thúc")).OrderByDescending(x => x.ThoiGianBatDau).ToList())
+    };
+}
+
+<main class="module-page">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">Sinh viên</span>
+            <h1>Tra cứu sự kiện</h1>
+            <p>Tìm sự kiện, đăng ký tham gia và điểm danh trực tiếp bằng tài khoản sinh viên.</p>
+        </div>
+    </div>
+    
+    @if (TempData["Message"] != null)
+        {
+        <div class="alert alert-warning" style="margin-bottom: 20px; padding: 15px; background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; border-radius: 5px;">
+            <strong>Lưu ý:</strong> @TempData["Message"]
+        </div>
+        }
+    @if (ViewBag.TenHocKyHienTai != null)
+        {
+        <p class="text-muted" style="margin-bottom: 10px;">
+            Đang hiển thị sự kiện trong: <strong>@ViewBag.TenHocKyHienTai</strong>
+        </p>
+        }
+
+    @using (Html.BeginForm("SuKien", "SinhVien", FormMethod.Get, new { @class = "filter-bar" }))
+        {
+        <input type="search" name="tuKhoa" value="@ViewBag.TuKhoa" class="form-control" placeholder="Tìm theo tên, địa điểm, cấp tổ chức" />
+
+        <input type="date" name="tuNgay" value="@ViewBag.TuNgay" class="form-control" placeholder="Từ ngày" />
+        <input type="date" name="denNgay" value="@ViewBag.DenNgay" class="form-control" placeholder="Đến ngày" />
+        <select name="loc" class="form-control">
+            <option value="tat-ca" @(currentFilter == "tat-ca" ? "selected" : "")>Tất cả sự kiện</option>
+            <option value="sap-dien-ra" @(currentFilter == "sap-dien-ra" ? "selected" : "")>Đang/Sắp diễn ra</option>
+            <option value="da-ket-thuc" @(currentFilter == "da-ket-thuc" ? "selected" : "")>Đã kết thúc</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Lọc sự kiện</button>
+        }
+
+    @if (!Model.Any())
+        {
+        <section class="empty-state">
+            <h2>Không tìm thấy sự kiện phù hợp</h2>
+            <p>Thử đổi từ khóa hoặc chọn bộ lọc “Tất cả sự kiện” để xem dữ liệu hiện có trong hệ thống.</p>
+        </section>
+        }
+    else
+        {
+        foreach (var eventSection in eventSections.Where(x => x.Item3.Any()))
+            {
+            <section class="event-section">
+                <div class="event-section-heading">
+                    <div>
+                        <h2>@eventSection.Item1</h2>
+                        <p>@eventSection.Item2</p>
+                    </div>
+                    <span class="status-pill muted">@eventSection.Item3.Count sự kiện</span>
+                </div>
+                <div class="event-grid">
+            @foreach (var item in eventSection.Item3)
+                {
+                var isRegistered = registeredEventIds.Contains(item.MaSuKien);
+                var isAttended = attendedEventIds.Contains(item.MaSuKien);
+
+                <article class="event-card">
+                    <div>
+                        <div class="event-card-header">
+                            <span class="status-pill">@(item.TrangThaiSuKien != null ? item.TrangThaiSuKien.TenTTSK : "Đang mở")</span>
+                            @if (isAttended)
+                                {
+                                <span class="status-pill success">Đã điểm danh</span>
+                                }
+                            else if (isRegistered)
+                                {
+                                <span class="status-pill muted">Đã đăng ký</span>
+                                }
+                        </div>
+                        <h2>@item.TenSuKien</h2>
+                        <p>@item.Noidung</p>
+                    </div>
+                    <dl>
+                        <dt>Thời gian</dt>
+                        <dd>@item.ThoiGianBatDau.ToString("dd/MM/yyyy HH:mm") - @item.ThoiGianKetThuc.ToString("dd/MM/yyyy HH:mm")</dd>
+                        <dt>Địa điểm</dt>
+                        <dd>@item.DiaDiem</dd>
+                        <dt>Cấp tổ chức</dt>
+                        <dd>@item.CapToChuc</dd>
+                        <dt>Điểm rèn luyện</dt>
+                        <dd>@(item.MucDiemRenLuyen != null ? item.MucDiemRenLuyen.TenMucDRL : "Chưa cấu hình")</dd>
+                        <dt>Số lượng</dt>
+                        <dd>@item.SoLuongDaDangKy / @(item.SoLuongToiDa.HasValue ? item.SoLuongToiDa.Value.ToString() : "Không giới hạn")</dd>
+                    </dl>
+                    <div class="event-actions">
+                        @if (!isRegistered)
+                            {
+                            using (Html.BeginForm("DangKy", "SinhVien", new { id = item.MaSuKien }, FormMethod.Post, new { id = "form_register_" + item.MaSuKien }))
+                                {
+                                @Html.AntiForgeryToken()
+                                var overlappingWarnings = ViewBag.OverlappingWarnings as Dictionary<string, string> ?? new Dictionary<string, string>();
+                                bool hasOverlap = overlappingWarnings.ContainsKey(item.MaSuKien);
+                                string confirmMsg = hasOverlap 
+                                    ? $"<span class='text-danger fw-bold'><i class='bi bi-exclamation-triangle'></i> CẢNH BÁO TRÙNG LỊCH:</span><br/>Sự kiện <b>{overlappingWarnings[item.MaSuKien]}</b> diễn ra cùng thời gian với sự kiện này.<br/><br/>Bạn có chắc chắn muốn tiếp tục đăng ký tham gia không?"
+                                    : "Bạn có chắc chắn muốn đăng ký tham gia sự kiện này không?";
+                                
+                                <button type="button" class="btn btn-primary btn-register-modal" data-event-id="@item.MaSuKien" data-msg="@confirmMsg">Đăng ký tham gia</button>
+                                }
+                            }
+                        else if (!isAttended)
+                            {
+                            <span class="status-pill muted">Chờ quét QR tại sự kiện</span>
+                            <a class="btn btn-secondary" href="@Url.Action("LichCaNhan", "SinhVien")">Xem lịch cá nhân</a>
+                            }
+                        else
+                            {
+                            <a class="btn btn-secondary" href="@Url.Action("DiemRenLuyen", "SinhVien")">Xem điểm rèn luyện</a>
+                            }
+                    </div>
+                </article>
+                }
+                </div>
+            </section>
+            }
+        }
+</main>
+
+<!-- Modal Xác nhận Đăng ký -->
+<div class="modal fade" id="registerConfirmModal" tabindex="-1" aria-labelledby="registerConfirmModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registerConfirmModalLabel">Xác nhận đăng ký</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p id="registerConfirmMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="btnConfirmRegister">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var currentEventId = '';
+            var modalElement = document.getElementById('registerConfirmModal');
+            if (modalElement) {
+                var registerModal = new bootstrap.Modal(modalElement);
+                
+                document.querySelectorAll('.btn-register-modal').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        currentEventId = this.getAttribute('data-event-id');
+                        var msg = this.getAttribute('data-msg');
+                        document.getElementById('registerConfirmMessage').innerHTML = msg;
+                        registerModal.show();
+                    });
+                });
+
+                document.getElementById('btnConfirmRegister').addEventListener('click', function() {
+                    var form = document.getElementById('form_register_' + currentEventId);
+                    if(form) {
+                        form.submit();
+                    }
+                });
+            }
+        });
+    </script>
+}

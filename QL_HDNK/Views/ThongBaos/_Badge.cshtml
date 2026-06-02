@@ -1,0 +1,11 @@
+@{
+    var unreadCount = ViewBag.UnreadCount as int? ?? 0;
+}
+
+<a class="nav-link notification-link" href="@Url.Action("Index", "ThongBaos")">
+    Thông báo
+    @if (unreadCount > 0)
+    {
+        <span class="notification-badge">@unreadCount</span>
+    }
+</a>

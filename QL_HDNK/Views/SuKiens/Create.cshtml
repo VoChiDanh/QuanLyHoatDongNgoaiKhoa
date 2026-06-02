@@ -1,0 +1,122 @@
+@model QL_HDNK.Models.SuKien
+
+@{
+    ViewBag.Title = "Tạo sự kiện";
+}
+
+<main class="module-page">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">Quản lý hoạt động</span>
+            <h1>Tạo sự kiện</h1>
+            <p>Người tạo được tự động gắn theo tài khoản đang đăng nhập.</p>
+        </div>
+    </div>
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.MaNguoiTao)
+        @Html.HiddenFor(model => model.SoLuongDaDangKy)
+        @Html.HiddenFor(model => model.MaTTSK)
+
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.MaSuKien, htmlAttributes: new { @class = "control-label required" })
+                @Html.TextBoxFor(model => model.MaSuKien, new { @class = "form-control", @readonly = "readonly" })
+                @Html.ValidationMessageFor(model => model.MaSuKien, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.TenSuKien, htmlAttributes: new { @class = "control-label required" })
+                @Html.TextBoxFor(model => model.TenSuKien, new { @class = "form-control", required = "required" })
+                @Html.ValidationMessageFor(model => model.TenSuKien, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Noidung, htmlAttributes: new { @class = "control-label required" })
+                @Html.TextAreaFor(model => model.Noidung, new { @class = "form-control", required = "required", rows = "4" })
+                @Html.ValidationMessageFor(model => model.Noidung, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ThoiGianBatDau, htmlAttributes: new { @class = "control-label required" })
+                    @Html.TextBoxFor(model => model.ThoiGianBatDau, "{0:yyyy-MM-ddTHH:mm}", new { @class = "form-control", type = "datetime-local", required = "required" })
+                    @Html.ValidationMessageFor(model => model.ThoiGianBatDau, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ThoiGianKetThuc, htmlAttributes: new { @class = "control-label required" })
+                    @Html.TextBoxFor(model => model.ThoiGianKetThuc, "{0:yyyy-MM-ddTHH:mm}", new { @class = "form-control", type = "datetime-local", required = "required" })
+                    @Html.ValidationMessageFor(model => model.ThoiGianKetThuc, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MaHocKy, "Học kỳ", htmlAttributes: new { @class = "control-label required" })
+                    @Html.DropDownList("MaHocKy", null, "Chọn học kỳ", new { @class = "form-control", required = "required" })
+                    @Html.ValidationMessageFor(model => model.MaHocKy, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MaNamHoc, "Năm học", htmlAttributes: new { @class = "control-label required" })
+                    @Html.DropDownList("MaNamHoc", null, "Chọn năm học", new { @class = "form-control", required = "required" })
+                    @Html.ValidationMessageFor(model => model.MaNamHoc, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.DiaDiem, htmlAttributes: new { @class = "control-label required" })
+                @Html.TextBoxFor(model => model.DiaDiem, new { @class = "form-control", required = "required" })
+                @Html.ValidationMessageFor(model => model.DiaDiem, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.SoLuongToiDa, htmlAttributes: new { @class = "control-label" })
+                    @Html.TextBoxFor(model => model.SoLuongToiDa, new { @class = "form-control", type = "number", min = "1" })
+                    @Html.ValidationMessageFor(model => model.SoLuongToiDa, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CapToChuc, htmlAttributes: new { @class = "control-label required" })
+                    @Html.DropDownList("CapToChuc", (SelectList)ViewBag.CapToChucList, new { @class = "form-control", required = "required" })
+                    @Html.ValidationMessageFor(model => model.CapToChuc, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="control-label">Sự kiện cha cấp khoa</label>
+                @Html.DropDownList("MaSuKienCha", (SelectList)ViewBag.MaSuKienCha, "Không gắn sự kiện cha", new { @class = "form-control" })
+                <span class="help-block">Dùng khi lớp tạo sự kiện con từ một sự kiện cấp khoa để điểm danh theo lớp nhưng báo cáo khoa vẫn gom thành một cột.</span>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MaMucDRL, "Mức điểm rèn luyện", htmlAttributes: new { @class = "control-label required" })
+                    @Html.DropDownList("MaMucDRL", null, "Chọn mức điểm", new { @class = "form-control", required = "required" })
+                    @Html.ValidationMessageFor(model => model.MaMucDRL, "", new { @class = "text-danger" })
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label">Trạng thái sự kiện</label>
+                    <input class="form-control" value='@(ViewBag.EventStatusName ?? "Tự động theo quy trình duyệt")' readonly="readonly" />
+                    @Html.ValidationMessageFor(model => model.MaTTSK, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Tạo sự kiện</button>
+                @Html.ActionLink("Quay lại danh sách", "Index", null, new { @class = "btn btn-secondary" })
+            </div>
+        </div>
+    }
+</main>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

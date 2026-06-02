@@ -1,0 +1,93 @@
+﻿@model IEnumerable<QL_HDNK.Models.NguoiDung>
+
+@{
+    ViewBag.Title = "Danh sách";
+}
+
+<h2>Danh sách người dùng</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["Message"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<p>
+    @Html.ActionLink("Thêm mới", "Create", null, new { @class = "btn btn-primary" })
+    @Html.ActionLink("Đồng bộ từ Excel", "ImportExcel", null, new { @class = "btn btn-success ms-2" })
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.MaSinhVien)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MatKhau)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.HoTen)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.NgaySinh)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Email)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LopHoc.TenLop)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LopHoc.KhoaHoc)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LopHoc.Khoa)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.QuyenHan.TenQuyen)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.MaSinhVien)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MatKhau)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.HoTen)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.NgaySinh)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Email)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LopHoc.TenLop)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LopHoc.KhoaHoc)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LopHoc.Khoa)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.QuyenHan.TenQuyen)
+        </td>
+        <td>
+            @Html.ActionLink("Sửa", "Edit", new { id=item.MaNguoiDung }) |
+            @Html.ActionLink("Chi tiết", "Details", new { id=item.MaNguoiDung }) |
+            @Html.ActionLink("Xóa", "Delete", new { id=item.MaNguoiDung })
+        </td>
+    </tr>
+}
+
+</table>
+
+
+

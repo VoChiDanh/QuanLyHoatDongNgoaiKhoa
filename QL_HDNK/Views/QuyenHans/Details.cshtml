@@ -1,0 +1,37 @@
+﻿@model QL_HDNK.Models.QuyenHan
+
+@{
+    ViewBag.Title = "Chi tiết";
+}
+
+<h2>Chi tiết</h2>
+
+<div>
+    <h4>Quyền hạn</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.TenQuyen)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TenQuyen)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MoTa)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MoTa)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Sửa", "Edit", new { id = Model.MaQuyen }) |
+    @Html.ActionLink("Quay lại danh sách", "Index")
+</p>
+
+
+

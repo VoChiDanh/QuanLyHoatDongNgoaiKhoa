@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="4eb50914e0864f369f145863cffe745e" Name="Diagram1" ZoomLevel="74">
+        <EntityTypeShape EntityType="QuanLy_HDNKModel.DangKy_DiemDanh" Width="1.5" PointX="9.75" PointY="6.25" />
+        <EntityTypeShape EntityType="QuanLy_HDNKModel.DanhMucDiem" Width="1.5" PointX="3" PointY="1.125" />
+        <EntityTypeShape EntityType="QuanLy_HDNKModel.HocKy" Width="1.5" PointX="5.25" PointY="11.25" />
+        <EntityTypeShape EntityType="QuanLy_HDNKModel.Khoa" Width="1.5" PointX="0.75" PointY="7.5" />
+        <EntityTypeShape EntityType="QuanLy_HDNKModel.LopHoc" Width="1.5" PointX="3" PointY="7.25" />
+        <EntityTypeShape EntityType="QuanLy_HDNKModel.MucDiemRenLuyen" Width="1.5" PointX="5.25" PointY="0.75" />
+        <EntityTypeShape EntityType="QuanLy_HDNKModel.NguoiDung" Width="1.5" PointX="5.25" PointY="6.5" />
+        <EntityTypeShape EntityType="QuanLy_HDNKModel.NhatKyHeThong" Width="1.5" PointX="7.5" PointY="18" />
+        <EntityTypeShape EntityType="QuanLy_HDNKModel.QuyenHan" Width="1.5" PointX="3" PointY="4.5" />
+        <EntityTypeShape EntityType="QuanLy_HDNKModel.SuKien" Width="1.5" PointX="7.5" PointY="5.875" />
+        <EntityTypeShape EntityType="QuanLy_HDNKModel.ThamSoQuyDinh" Width="1.5" PointX="7.75" PointY="1.375" />
+        <EntityTypeShape EntityType="QuanLy_HDNKModel.TrangThaiDangKy" Width="1.5" PointX="7.5" PointY="21.5" />
+        <EntityTypeShape EntityType="QuanLy_HDNKModel.TrangThaiDiemDanh" Width="1.5" PointX="7.5" PointY="14.125" />
+        <EntityTypeShape EntityType="QuanLy_HDNKModel.TrangThaiSuKien" Width="1.5" PointX="5.25" PointY="13.5" />
+        <AssociationConnector Association="QuanLy_HDNKModel.FK__DangKy_Di__MaNgu__6754599E" />
+        <AssociationConnector Association="QuanLy_HDNKModel.FK__DangKy_Di__MaSuK__66603565" />
+        <AssociationConnector Association="QuanLy_HDNKModel.FK__DangKy_Di__MaTTD__68487DD7" />
+        <AssociationConnector Association="QuanLy_HDNKModel.FK__DangKy_Di__MaTTD__693CA210" />
+        <AssociationConnector Association="QuanLy_HDNKModel.FK__DangKy_Di__Nguoi__6A30C649" />
+        <AssociationConnector Association="QuanLy_HDNKModel.FK__DanhMucDi__MaDan__4AB81AF0" />
+        <AssociationConnector Association="QuanLy_HDNKModel.FK__MucDiemRe__MaDan__534D60F1" />
+        <AssociationConnector Association="QuanLy_HDNKModel.FK__SuKien__MaHocKy__5EBF139D" />
+        <AssociationConnector Association="QuanLy_HDNKModel.FK__LopHoc__MaKhoa__47DBAE45" />
+        <AssociationConnector Association="QuanLy_HDNKModel.FK__NguoiDung__MaLop__4F7CD00D" />
+        <AssociationConnector Association="QuanLy_HDNKModel.FK__SuKien__MaMucDRL__5BE2A6F2" />
+        <AssociationConnector Association="QuanLy_HDNKModel.FK__NguoiDung__MaQuy__5070F446" />
+        <AssociationConnector Association="QuanLy_HDNKModel.FK__NhatKyHeT__MaNgu__6E01572D" />
+        <AssociationConnector Association="QuanLy_HDNKModel.FK__SuKien__MaNguoiT__5CD6CB2B" />
+        <AssociationConnector Association="QuanLy_HDNKModel.FK__SuKien__MaTTSK__5DCAEF64" />
+        <EntityTypeShape EntityType="QuanLy_HDNKModel.ThongBao" Width="1.5" PointX="10.375" PointY="0.75" />
+        <AssociationConnector Association="QuanLy_HDNKModel.FK_SuKien_Cha" />
+        <EntityTypeShape EntityType="QuanLy_HDNKModel.NamHoc" Width="1.5" PointX="2" PointY="10.25" />
+        <AssociationConnector Association="QuanLy_HDNKModel.FK_SuKien_NamHoc" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

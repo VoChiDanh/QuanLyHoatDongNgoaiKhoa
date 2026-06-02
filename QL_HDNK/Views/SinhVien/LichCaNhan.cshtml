@@ -1,0 +1,98 @@
+﻿@model IEnumerable<QL_HDNK.Models.DangKy_DiemDanh>
+
+@{
+    ViewBag.Title = "Lịch cá nhân";
+}
+
+<main class="module-page">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow">Sinh viên</span>
+            <h1>Lịch cá nhân</h1>
+            <p>Danh sách sự kiện đã đăng ký, trạng thái điểm danh và thao tác hủy khi cần.</p>
+        </div>
+        @Html.ActionLink("Tra cứu thêm sự kiện", "TraCuuSuKien", "SinhVien", null, new { @class = "btn btn-primary" })
+    </div>
+    @using (Html.BeginForm("LichCaNhan", "SinhVien", FormMethod.Get, new { @class = "filter-bar" }))
+    {
+        <input type="search" name="tuKhoa" value="@ViewBag.TuKhoa" class="form-control" placeholder="Tìm theo tên sự kiện..." />
+
+        @Html.DropDownList("maHocKy", (SelectList)ViewBag.DanhSachHocKy, "-- Tất cả học kỳ --", new { @class = "form-control" })
+
+        @Html.DropDownList("maNamHoc", (SelectList)ViewBag.DanhSachNamHoc, "-- Tất cả năm học --", new { @class = "form-control" })
+
+        <button type="submit" class="btn btn-secondary">Tra cứu</button>
+    }
+    <table class="table mt-3">
+        @if (TempData["Message"] != null)
+        {
+            <caption class="table-message">@TempData["Message"]</caption>
+        }
+        <tr>
+            <th>Sự kiện</th>
+            <th>Học kỳ / Năm học</th>
+            <th>Thời gian diễn ra</th>
+            <th>Đăng ký</th>
+            <th>Điểm danh</th>
+            <th>Trạng thái điểm danh</th>
+        </tr>
+        @if (!Model.Any())
+        {
+            <tr>
+                <td colspan="6" class="text-center" style="padding: 2rem; color: #6c757d;">
+                    Không tìm thấy sự kiện nào khớp với bộ lọc của bạn.
+                </td>
+            </tr>
+        }
+        else
+        {
+            foreach (var item in Model)
+            {
+                var eventStatusName = item.SuKien != null && item.SuKien.TrangThaiSuKien != null ? item.SuKien.TrangThaiSuKien.TenTTSK : "";
+                var canCancelRegistration = item.SuKien != null &&
+                    !item.ThoiGianDiemDanh.HasValue &&
+                    (eventStatusName.Contains("mở") || eventStatusName.Contains("Mở")) &&
+                    !eventStatusName.Contains("Đóng") &&
+                    !eventStatusName.Contains("đóng") &&
+                    !eventStatusName.Contains("Kết thúc") &&
+                    !eventStatusName.Contains("kết thúc");
+                <tr>
+                    <td>@(item.SuKien != null ? item.SuKien.TenSuKien : item.MaSuKien)</td>
+                    <td>
+                        @if (item.SuKien != null && item.SuKien.HocKy != null && item.SuKien.NamHoc != null)
+                        {
+                            <span class="text-muted" style="font-size: 0.9em;">
+                                @item.SuKien.HocKy.TenHocKy  <br /> @item.SuKien.NamHoc.TenNamHoc
+                            </span>
+                        }
+                    </td>
+                    <td>@(item.SuKien != null ? item.SuKien.ThoiGianBatDau.ToString("dd/MM/yyyy HH:mm") +" đến "+ item.SuKien.ThoiGianKetThuc.ToString("dd/MM/yyyy HH:mm") : "")</td>
+                    <td>@(item.TrangThaiDangKy != null ? item.TrangThaiDangKy.TenTTDK : "Đã đăng ký")</td>
+                    <td>@(item.TrangThaiDiemDanh != null ? item.TrangThaiDiemDanh.TenTTDD : "Chưa điểm danh")</td>
+                    <td>
+                        @if (item.ThoiGianDiemDanh.HasValue)
+                        {
+                            <span class="status-pill success">Đã được duyệt</span>
+                        }
+                        else if (!string.IsNullOrWhiteSpace(item.MinhChung) && item.MinhChung.StartsWith("QR:"))
+                        {
+                            <span class="status-pill warning">Đã quét QR, chờ duyệt</span>
+                        }
+                        else
+                        {
+                            <span class="status-pill muted">Quét QR tại sự kiện</span>
+                        }
+                        @if (canCancelRegistration)
+                        {
+                            using (Html.BeginForm("HuyDangKy", "SinhVien", new { id = item.MaDangKy }, FormMethod.Post, new { @class = "inline-form" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Hủy</button>
+                            }
+                        }
+                    </td>
+                </tr>
+            }
+        }
+    </table>
+</main>

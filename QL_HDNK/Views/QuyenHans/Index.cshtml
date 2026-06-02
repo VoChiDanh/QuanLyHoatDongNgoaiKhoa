@@ -1,0 +1,66 @@
+﻿@model IEnumerable<QL_HDNK.Models.QuyenHan>
+
+@{
+    ViewBag.Title = "Danh sách";
+}
+
+<div class="page-heading">
+    <div>
+        <span class="eyebrow">Quản trị viên</span>
+        <h1>Phân quyền người dùng</h1>
+        <p>Hệ thống kiểm tra quyền ở server, không chỉ ẩn menu. Mỗi nhóm chỉ truy cập được đúng chức năng được cấp.</p>
+    </div>
+    @Html.ActionLink("Thêm quyền", "Create", null, new { @class = "btn btn-primary" })
+</div>
+
+<section class="permission-grid" aria-label="Ma trận phân quyền">
+    <article>
+        <strong>Quản trị viên</strong>
+        <p>Toàn quyền: người dùng, phân quyền, đào tạo, cấu hình điểm, trạng thái, nhật ký, sự kiện và báo cáo.</p>
+    </article>
+    <article>
+        <strong>Đoàn Khoa/Liên Chi Hội</strong>
+        <p>Quản lý sự kiện cấp khoa, duyệt và theo dõi đăng ký - điểm danh, cấu hình danh mục/mức điểm rèn luyện.</p>
+    </article>
+    <article>
+        <strong>BCS/BCH lớp</strong>
+        <p>Quản lý sự kiện cấp lớp, theo dõi danh sách đăng ký, hỗ trợ điểm danh thủ công và báo cáo cấp lớp.</p>
+    </article>
+    <article>
+        <strong>Sinh viên</strong>
+        <p>Tra cứu sự kiện, đăng ký/hủy đăng ký, quét QR điểm danh, xem lịch cá nhân và điểm rèn luyện.</p>
+    </article>
+</section>
+
+<h2>Danh sách quyền trong cơ sở dữ liệu</h2>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.TenQuyen)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.MoTa)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.TenQuyen)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.MoTa)
+        </td>
+        <td>
+            @Html.ActionLink("Sửa", "Edit", new { id=item.MaQuyen }) |
+            @Html.ActionLink("Chi tiết", "Details", new { id=item.MaQuyen }) |
+            @Html.ActionLink("Xóa", "Delete", new { id=item.MaQuyen })
+        </td>
+    </tr>
+}
+
+</table>
+
+
+

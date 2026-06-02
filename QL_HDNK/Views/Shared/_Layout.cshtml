@@ -1,0 +1,218 @@
+@using System
+@using System.Data.Entity
+@using System.Linq
+@using QL_HDNK.Filters
+@using QL_HDNK.Models
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewBag.Title - Quản lý hoạt động ngoại khóa</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <style>
+        /* CSS bổ sung để đảm bảo Offcanvas hiển thị đẹp và main chiếm toàn màn hình */
+        .app-shell {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .app-main {
+            flex: 1;
+            padding: 1rem;
+            width: 100%;
+        }
+
+        .offcanvas-body .app-sidebar {
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .navbar-brand {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    @{
+        var currentController = (ViewContext.RouteData.Values["controller"] ?? "").ToString();
+        var currentAction = (ViewContext.RouteData.Values["action"] ?? "").ToString();
+        if (Request.IsAuthenticated && string.IsNullOrWhiteSpace((Session["TenQuyen"] ?? "").ToString()) && string.IsNullOrWhiteSpace((Session["MaQuyen"] ?? "").ToString()))
+        {
+            using (var layoutDb = new QuanLy_HDNKEntities())
+            {
+                var layoutUserId = User.Identity.Name;
+                var layoutUser = layoutDb.NguoiDungs.Include("QuyenHan").FirstOrDefault(x => x.MaNguoiDung == layoutUserId);
+                if (layoutUser != null)
+                {
+                    Session["MaNguoiDung"] = layoutUser.MaNguoiDung;
+                    Session["HoTen"] = layoutUser.HoTen;
+                    Session["MaSinhVien"] = layoutUser.MaSinhVien;
+                    Session["MaQuyen"] = layoutUser.MaQuyen;
+                    Session["TenQuyen"] = layoutUser.QuyenHan != null ? layoutUser.QuyenHan.TenQuyen : "";
+                }
+            }
+        }
+        var roleKey = RoleHelper.Normalize((Session["MaQuyen"] ?? "").ToString(), (Session["TenQuyen"] ?? Session["RoleKey"] ?? "").ToString());
+        Session["RoleKey"] = roleKey;
+        Func<string, string, string> active = (controller, action) =>
+            string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase)
+            && (string.IsNullOrEmpty(action) || string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase))
+                ? " active"
+                : "";
+        Func<string, bool> atLeast = requiredRole => RoleHelper.IsAtLeast(roleKey, requiredRole);
+    }
+
+    @if (!Request.IsAuthenticated)
+    {
+        <nav class="navbar navbar-expand-lg navbar-dark app-topbar">
+            <div class="container-fluid">
+                @Html.ActionLink("QUẢN LÝ HOẠT ĐỘNG NGOẠI KHÓA", "Login", "Account", new { area = "" }, new { @class = "navbar-brand fw-bold" })
+                <div class="ms-auto d-flex gap-2">
+                    @Html.ActionLink("Đăng nhập", "Login", "Account", new { area = "" }, new { @class = "nav-link" + active("Account", "Login") })
+                    @Html.ActionLink("Đăng ký", "Register", "Account", new { area = "" }, new { @class = "nav-link" + active("Account", "Register") })
+                </div>
+            </div>
+        </nav>
+        <main class="auth-shell">
+            @RenderBody()
+        </main>
+
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("scripts", required: false)
+    }
+    else
+    {
+        <!-- NAVBAR -->
+        <nav class="navbar navbar-expand-lg navbar-dark app-topbar">
+            <div class="container-fluid">
+                <!-- Nút Toggle cho Sidebar (Offcanvas) -->
+                <button class="navbar-toggler d-block" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas" aria-label="Mở menu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                @Html.ActionLink("QUẢN LÝ HOẠT ĐỘNG NGOẠI KHÓA", "Index", "Home", new { area = "" }, new { @class = "navbar-brand fw-bold" })
+
+                <!-- Nút Toggle cho Menu User (Collapse) trên Mobile -->
+                <button type="button" class="navbar-toggler ms-auto" data-bs-toggle="collapse" data-bs-target="#mainNavigation" aria-controls="mainNavigation" aria-expanded="false" aria-label="Mở điều hướng user">
+                    <i class="bi bi-person-circle"></i> <!-- Bạn có thể đổi icon tùy ý -->
+                </button>
+
+                <div class="collapse navbar-collapse" id="mainNavigation">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">@Html.Action("Badge", "ThongBaos")</li>
+                        <li class="nav-item">@Html.ActionLink((Session["HoTen"] ?? User.Identity.Name).ToString(), "Profile", "Account", new { area = "" }, new { @class = "nav-link user-chip" + active("Account", "Profile") })</li>
+                        <li class="nav-item">@Html.ActionLink("Đăng xuất", "Logout", "Account", new { area = "" }, new { @class = "nav-link" })</li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- OFFCANVAS SIDEBAR -->
+        <div class="offcanvas offcanvas-start bg-light" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
+            <div class="offcanvas-header border-bottom">
+                <h5 class="offcanvas-title fw-bold" id="sidebarOffcanvasLabel">Menu Chức Năng</h5>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Đóng"></button>
+            </div>
+            <div class="offcanvas-body p-0">
+                <!-- Toàn bộ nội dung Sidebar cũ được đưa vào đây -->
+                <aside class="app-sidebar p-3" aria-label="Điều hướng chính">
+                    <div class="sidebar-section">
+                        <div class="sidebar-title">Sinh viên</div>
+                        @Html.ActionLink("Tra cứu sự kiện", "SuKien", "SinhVien", new { area = "" }, new { @class = "sidebar-link" + active("SinhVien", "SuKien") })
+                        @Html.ActionLink("Lịch cá nhân", "LichCaNhan", "SinhVien", new { area = "" }, new { @class = "sidebar-link" + active("SinhVien", "LichCaNhan") })
+                        @Html.ActionLink("Quét QR điểm danh", "QuetQr", "SinhVien", new { area = "" }, new { @class = "sidebar-link" + active("SinhVien", "QuetQr") })
+                        @Html.ActionLink("Điểm rèn luyện", "DiemRenLuyen", "SinhVien", new { area = "" }, new { @class = "sidebar-link" + active("SinhVien", "DiemRenLuyen") })
+                        @Html.ActionLink("Thông báo", "Index", "ThongBaos", new { area = "" }, new { @class = "sidebar-link" + active("ThongBaos", "") })
+                        @Html.ActionLink("Tài khoản", "Profile", "Account", new { area = "" }, new { @class = "sidebar-link" + active("Account", "Profile") })
+                    </div>
+
+                    @if (atLeast(RoleKeys.ClassOfficer))
+                    {
+                        <div class="sidebar-section">
+                            <div class="sidebar-title">Quản lý hoạt động</div>
+                            @Html.ActionLink("Bảng điều khiển", "Index", "Home", new { area = "" }, new { @class = "sidebar-link" + active("Home", "Index") })
+                            @Html.ActionLink("Sự kiện", "Index", "SuKiens", new { area = "" }, new { @class = "sidebar-link" + active("SuKiens", "") })
+                            @Html.ActionLink("Đăng ký - điểm danh", "Index", "DangKy_DiemDanh", new { area = "" }, new { @class = "sidebar-link" + active("DangKy_DiemDanh", "") })
+                        </div>
+
+                        <div class="sidebar-section">
+                            <span class="sidebar-title">Báo cáo & Thống kê</span>
+                            <a class="sidebar-link @(active("BaoCaos", "ToanKhoa") != "" || active("BaoCaos", "ThongKeLop") != "" ? "active" : "")"
+                               data-bs-toggle="collapse" href="#reportSubmenu" role="button">
+                                <i class="bi bi-graph-up-arrow"></i>
+                                <span>Báo cáo thống kê</span>
+                                <i class="bi bi-chevron-down ms-auto small"></i>
+                            </a>
+                            <div class="collapse @(active("BaoCaos", "") != "" ? "show" : "")" id="reportSubmenu">
+                                <ul class="list-unstyled ps-4">
+                                    @if (atLeast(RoleKeys.FacultyUnion))
+                                    {
+                                        <li>
+                                            @Html.ActionLink("Báo cáo toàn Khoa", "ToanKhoa", "BaoCaos", new { area = "" }, new { @class = "sidebar-link sub-link" + active("BaoCaos", "ToanKhoa") })
+                                        </li>
+                                    }
+                                    <li>
+                                        @Html.ActionLink("Thống kê tham gia lớp", "ThongKeLop", "BaoCaos", new { area = "" }, new { @class = "sidebar-link sub-link" + active("BaoCaos", "ThongKeLop") })
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    }
+
+                    @if (atLeast(RoleKeys.FacultyUnion))
+                    {
+                        <div class="sidebar-section">
+                            <div class="sidebar-title">Điểm rèn luyện</div>
+                            @Html.ActionLink("Danh mục điểm", "Index", "DanhMucDiems", new { area = "" }, new { @class = "sidebar-link" + active("DanhMucDiems", "") })
+                        </div>
+
+                        <div class="sidebar-section">
+                            <div class="sidebar-title">Đào tạo</div>
+                            @Html.ActionLink("Khoa", "Index", "Khoas", new { area = "" }, new { @class = "sidebar-link" + active("Khoas", "") })
+                            @Html.ActionLink("Lớp học", "Index", "LopHocs", new { area = "" }, new { @class = "sidebar-link" + active("LopHocs", "") })
+                            @Html.ActionLink("Năm học", "Index", "NamHocs", new { area = "" }, new { @class = "sidebar-link" + active("NamHocs", "") })
+                            @Html.ActionLink("Học kỳ", "Index", "HocKies", new { area = "" }, new { @class = "sidebar-link" + active("HocKies", "") })
+                        </div>
+
+                        <div class="sidebar-section">
+                            <div class="sidebar-title">Hệ thống</div>
+                            @Html.ActionLink("Người dùng", "Index", "NguoiDungs", new { area = "" }, new { @class = "sidebar-link" + active("NguoiDungs", "") })
+                            @Html.ActionLink("Phân quyền", "Index", "QuyenHans", new { area = "" }, new { @class = "sidebar-link" + active("QuyenHans", "") })
+                            @Html.ActionLink("Nhật ký hệ thống", "Index", "NhatKyHeThongs", new { area = "" }, new { @class = "sidebar-link" + active("NhatKyHeThongs", "") })
+                            @Html.ActionLink("Tham số quy định", "Index", "ThamSoQuyDinhs", new { area = "" }, new { @class = "sidebar-link" + active("ThamSoQuyDinhs", "") })
+                        </div>
+
+                        <div class="sidebar-section">
+                            <div class="sidebar-title">Trạng thái</div>
+                            @Html.ActionLink("Sự kiện", "Index", "TrangThaiSuKiens", new { area = "" }, new { @class = "sidebar-link" + active("TrangThaiSuKiens", "") })
+                            @Html.ActionLink("Đăng ký", "Index", "TrangThaiDangKies", new { area = "" }, new { @class = "sidebar-link" + active("TrangThaiDangKies", "") })
+                            @Html.ActionLink("Điểm danh", "Index", "TrangThaiDiemDanhs", new { area = "" }, new { @class = "sidebar-link" + active("TrangThaiDiemDanhs", "") })
+                        </div>
+                    }
+                </aside>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT CỦA ỨNG DỤNG -->
+        <div class="app-shell">
+            <main class="app-main">
+                <div class="body-content">
+                    @RenderBody()
+                </div>
+                <footer class="app-footer mt-4 pt-3 border-top text-center text-muted">
+                    <span class="d-block">&copy; @DateTime.Now.Year QUẢN LÝ HOẠT ĐỘNG NGOẠI KHÓA</span>
+                    <span class="d-block">Hệ thống quản lý hoạt động ngoại khóa</span>
+                </footer>
+            </main>
+        </div>
+
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("scripts", required: false)
+    }
+</body>
+</html>

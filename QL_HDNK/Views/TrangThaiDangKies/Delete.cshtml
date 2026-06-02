@@ -1,0 +1,35 @@
+﻿@model QL_HDNK.Models.TrangThaiDangKy
+
+@{
+    ViewBag.Title = "Xóa";
+}
+
+<h2>Xóa</h2>
+
+<h3>Bạn có chắc chắn muốn xóa bản ghi này không?</h3>
+<div>
+    <h4>Trạng thái đăng ký</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.TenTTDK)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.TenTTDK)
+        </dd>
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Xóa" class="btn btn-default" /> |
+            @Html.ActionLink("Quay lại danh sách", "Index")
+        </div>
+    }
+</div>
+
+
+

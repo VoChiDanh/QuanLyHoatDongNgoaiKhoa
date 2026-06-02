@@ -1,0 +1,1176 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="DangKy_DiemDanh">
+          <Key>
+            <PropertyRef Name="MaDangKy" />
+          </Key>
+          <Property Name="MaDangKy" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="MaSuKien" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="MaNguoiDung" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="ThoiGianDangKy" Type="datetime" Nullable="false" />
+          <Property Name="MaTTDK" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="ThoiGianDiemDanh" Type="datetime" />
+          <Property Name="MinhChung" Type="nvarchar(max)" />
+          <Property Name="MaTTDD" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="NguoiDuyet" Type="nvarchar" MaxLength="10" />
+          <Property Name="ThoiGianDuyet" Type="datetime" />
+          <Property Name="GhiChu" Type="nvarchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="DanhMucDiem">
+          <Key>
+            <PropertyRef Name="MaDanhMuc" />
+          </Key>
+          <Property Name="MaDanhMuc" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="TenDanhMuc" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="DiemToiDa" Type="int" Nullable="false" />
+          <Property Name="MaDanhMucCha" Type="nvarchar" MaxLength="10" />
+          <Property Name="GhiChu" Type="nvarchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="HocKy">
+          <Key>
+            <PropertyRef Name="MaHocKy" />
+          </Key>
+          <Property Name="MaHocKy" Type="varchar" MaxLength="3" Nullable="false" />
+          <Property Name="TenHocKy" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="TuNgay" Type="date" />
+          <Property Name="DenNgay" Type="date" />
+        </EntityType>
+        <EntityType Name="Khoa">
+          <Key>
+            <PropertyRef Name="MaKhoa" />
+          </Key>
+          <Property Name="MaKhoa" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="TenKhoa" Type="nvarchar" MaxLength="255" Nullable="false" />
+        </EntityType>
+        <EntityType Name="LopHoc">
+          <Key>
+            <PropertyRef Name="MaLop" />
+          </Key>
+          <Property Name="MaLop" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="TenLop" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="MaKhoa" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="KhoaHoc" Type="nvarchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="MucDiemRenLuyen">
+          <Key>
+            <PropertyRef Name="MaMucDRL" />
+          </Key>
+          <Property Name="MaMucDRL" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="TenMucDRL" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="Diem" Type="int" Nullable="false" />
+          <Property Name="MaDanhMuc" Type="nvarchar" MaxLength="10" Nullable="false" />
+        </EntityType>
+        <EntityType Name="NamHoc">
+          <Key>
+            <PropertyRef Name="MaNamHoc" />
+          </Key>
+          <Property Name="MaNamHoc" Type="varchar" MaxLength="5" Nullable="false" />
+          <Property Name="TenNamHoc" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="TuNgay" Type="date" />
+          <Property Name="DenNgay" Type="date" />
+        </EntityType>
+        <EntityType Name="NguoiDung">
+          <Key>
+            <PropertyRef Name="MaNguoiDung" />
+          </Key>
+          <Property Name="MaNguoiDung" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="MaSinhVien" Type="nvarchar" MaxLength="50" />
+          <Property Name="MatKhau" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="HoTen" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="NgaySinh" Type="date" />
+          <Property Name="Email" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="MaLop" Type="nvarchar" MaxLength="10" />
+          <Property Name="MaQuyen" Type="nvarchar" MaxLength="10" Nullable="false" />
+        </EntityType>
+        <EntityType Name="NhatKyHeThong">
+          <Key>
+            <PropertyRef Name="MaNhatKy" />
+          </Key>
+          <Property Name="MaNhatKy" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="MaNguoiDung" Type="nvarchar" MaxLength="10" />
+          <Property Name="ChiTiet" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ThoiGian" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="QuyenHan">
+          <Key>
+            <PropertyRef Name="MaQuyen" />
+          </Key>
+          <Property Name="MaQuyen" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="TenQuyen" Type="nvarchar" MaxLength="100" Nullable="false" />
+          <Property Name="MoTa" Type="nvarchar" MaxLength="500" />
+        </EntityType>
+        <EntityType Name="SuKien">
+          <Key>
+            <PropertyRef Name="MaSuKien" />
+          </Key>
+          <Property Name="MaSuKien" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="TenSuKien" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="Noidung" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="ThoiGianBatDau" Type="datetime" Nullable="false" />
+          <Property Name="ThoiGianKetThuc" Type="datetime" Nullable="false" />
+          <Property Name="MaHocKy" Type="varchar" MaxLength="3" Nullable="false" />
+          <Property Name="MaNamHoc" Type="varchar" MaxLength="5" Nullable="false" />
+          <Property Name="DiaDiem" Type="nvarchar" MaxLength="500" Nullable="false" />
+          <Property Name="SoLuongToiDa" Type="int" />
+          <Property Name="MaMucDRL" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="CapToChuc" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="MaNguoiTao" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="MaTTSK" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="LyDoHuy" Type="nvarchar(max)" />
+          <Property Name="SoLuongDaDangKy" Type="int" Nullable="false" />
+          <Property Name="MaSuKienCha" Type="nvarchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="ThamSoQuyDinh">
+          <Key>
+            <PropertyRef Name="MaTS" />
+          </Key>
+          <Property Name="MaTS" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="TenTS" Type="nvarchar" MaxLength="255" Nullable="false" />
+          <Property Name="GiaTri" Type="float" Nullable="false" />
+          <Property Name="DonViTinh" Type="nvarchar" MaxLength="50" />
+          <Property Name="TinhTrang" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ThongBao">
+          <Key>
+            <PropertyRef Name="MaThongBao" />
+          </Key>
+          <Property Name="MaThongBao" Type="nvarchar" MaxLength="30" Nullable="false" />
+          <Property Name="MaNguoiNhan" Type="nvarchar" MaxLength="20" Nullable="false" />
+          <Property Name="TieuDe" Type="nvarchar" MaxLength="200" Nullable="false" />
+          <Property Name="NoiDung" Type="nvarchar" MaxLength="1000" />
+          <Property Name="DuongDan" Type="nvarchar" MaxLength="500" />
+          <Property Name="Loai" Type="nvarchar" MaxLength="50" />
+          <Property Name="MaLienQuan" Type="nvarchar" MaxLength="100" />
+          <Property Name="DaDoc" Type="bit" Nullable="false" />
+          <Property Name="ThoiGianTao" Type="datetime" Nullable="false" />
+          <Property Name="ThoiGianDoc" Type="datetime" />
+        </EntityType>
+        <EntityType Name="TrangThaiDangKy">
+          <Key>
+            <PropertyRef Name="MaTTDK" />
+          </Key>
+          <Property Name="MaTTDK" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="TenTTDK" Type="nvarchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TrangThaiDiemDanh">
+          <Key>
+            <PropertyRef Name="MaTTDD" />
+          </Key>
+          <Property Name="MaTTDD" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="TenTTDD" Type="nvarchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TrangThaiSuKien">
+          <Key>
+            <PropertyRef Name="MaTTSK" />
+          </Key>
+          <Property Name="MaTTSK" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="TenTTSK" Type="nvarchar" MaxLength="100" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_DangKy_NguoiDung">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="1" />
+          <End Role="DangKy_DiemDanh" Type="Self.DangKy_DiemDanh" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="DangKy_DiemDanh">
+              <PropertyRef Name="MaNguoiDung" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DangKy_NguoiDuyet">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="0..1" />
+          <End Role="DangKy_DiemDanh" Type="Self.DangKy_DiemDanh" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="DangKy_DiemDanh">
+              <PropertyRef Name="NguoiDuyet" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DangKy_SuKien">
+          <End Role="SuKien" Type="Self.SuKien" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="DangKy_DiemDanh" Type="Self.DangKy_DiemDanh" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SuKien">
+              <PropertyRef Name="MaSuKien" />
+            </Principal>
+            <Dependent Role="DangKy_DiemDanh">
+              <PropertyRef Name="MaSuKien" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DangKy_TTDD">
+          <End Role="TrangThaiDiemDanh" Type="Self.TrangThaiDiemDanh" Multiplicity="1" />
+          <End Role="DangKy_DiemDanh" Type="Self.DangKy_DiemDanh" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TrangThaiDiemDanh">
+              <PropertyRef Name="MaTTDD" />
+            </Principal>
+            <Dependent Role="DangKy_DiemDanh">
+              <PropertyRef Name="MaTTDD" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DangKy_TTDK">
+          <End Role="TrangThaiDangKy" Type="Self.TrangThaiDangKy" Multiplicity="1" />
+          <End Role="DangKy_DiemDanh" Type="Self.DangKy_DiemDanh" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TrangThaiDangKy">
+              <PropertyRef Name="MaTTDK" />
+            </Principal>
+            <Dependent Role="DangKy_DiemDanh">
+              <PropertyRef Name="MaTTDK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DanhMucDiem_Cha">
+          <End Role="DanhMucDiem" Type="Self.DanhMucDiem" Multiplicity="0..1" />
+          <End Role="DanhMucDiem1" Type="Self.DanhMucDiem" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DanhMucDiem">
+              <PropertyRef Name="MaDanhMuc" />
+            </Principal>
+            <Dependent Role="DanhMucDiem1">
+              <PropertyRef Name="MaDanhMucCha" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LopHoc_Khoa">
+          <End Role="Khoa" Type="Self.Khoa" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="LopHoc" Type="Self.LopHoc" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Khoa">
+              <PropertyRef Name="MaKhoa" />
+            </Principal>
+            <Dependent Role="LopHoc">
+              <PropertyRef Name="MaKhoa" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_MucDiemRenLuyen_DanhMucDiem">
+          <End Role="DanhMucDiem" Type="Self.DanhMucDiem" Multiplicity="1" />
+          <End Role="MucDiemRenLuyen" Type="Self.MucDiemRenLuyen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DanhMucDiem">
+              <PropertyRef Name="MaDanhMuc" />
+            </Principal>
+            <Dependent Role="MucDiemRenLuyen">
+              <PropertyRef Name="MaDanhMuc" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NguoiDung_LopHoc">
+          <End Role="LopHoc" Type="Self.LopHoc" Multiplicity="0..1" />
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LopHoc">
+              <PropertyRef Name="MaLop" />
+            </Principal>
+            <Dependent Role="NguoiDung">
+              <PropertyRef Name="MaLop" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NguoiDung_QuyenHan">
+          <End Role="QuyenHan" Type="Self.QuyenHan" Multiplicity="1" />
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuyenHan">
+              <PropertyRef Name="MaQuyen" />
+            </Principal>
+            <Dependent Role="NguoiDung">
+              <PropertyRef Name="MaQuyen" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_NhatKy_NguoiDung">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="0..1" />
+          <End Role="NhatKyHeThong" Type="Self.NhatKyHeThong" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="NhatKyHeThong">
+              <PropertyRef Name="MaNguoiDung" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SuKien_Cha">
+          <End Role="SuKien" Type="Self.SuKien" Multiplicity="0..1" />
+          <End Role="SuKien1" Type="Self.SuKien" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SuKien">
+              <PropertyRef Name="MaSuKien" />
+            </Principal>
+            <Dependent Role="SuKien1">
+              <PropertyRef Name="MaSuKienCha" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SuKien_HocKy">
+          <End Role="HocKy" Type="Self.HocKy" Multiplicity="1" />
+          <End Role="SuKien" Type="Self.SuKien" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="HocKy">
+              <PropertyRef Name="MaHocKy" />
+            </Principal>
+            <Dependent Role="SuKien">
+              <PropertyRef Name="MaHocKy" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SuKien_MucDiemRenLuyen">
+          <End Role="MucDiemRenLuyen" Type="Self.MucDiemRenLuyen" Multiplicity="1" />
+          <End Role="SuKien" Type="Self.SuKien" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MucDiemRenLuyen">
+              <PropertyRef Name="MaMucDRL" />
+            </Principal>
+            <Dependent Role="SuKien">
+              <PropertyRef Name="MaMucDRL" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SuKien_NamHoc">
+          <End Role="NamHoc" Type="Self.NamHoc" Multiplicity="1" />
+          <End Role="SuKien" Type="Self.SuKien" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NamHoc">
+              <PropertyRef Name="MaNamHoc" />
+            </Principal>
+            <Dependent Role="SuKien">
+              <PropertyRef Name="MaNamHoc" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SuKien_NguoiTao">
+          <End Role="NguoiDung" Type="Self.NguoiDung" Multiplicity="1" />
+          <End Role="SuKien" Type="Self.SuKien" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="SuKien">
+              <PropertyRef Name="MaNguoiTao" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SuKien_TrangThai">
+          <End Role="TrangThaiSuKien" Type="Self.TrangThaiSuKien" Multiplicity="1" />
+          <End Role="SuKien" Type="Self.SuKien" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TrangThaiSuKien">
+              <PropertyRef Name="MaTTSK" />
+            </Principal>
+            <Dependent Role="SuKien">
+              <PropertyRef Name="MaTTSK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="StoreContainer">
+          <EntitySet Name="DangKy_DiemDanh" EntityType="Self.DangKy_DiemDanh" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DanhMucDiem" EntityType="Self.DanhMucDiem" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="HocKy" EntityType="Self.HocKy" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Khoa" EntityType="Self.Khoa" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LopHoc" EntityType="Self.LopHoc" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="MucDiemRenLuyen" EntityType="Self.MucDiemRenLuyen" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NamHoc" EntityType="Self.NamHoc" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NguoiDung" EntityType="Self.NguoiDung" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NhatKyHeThong" EntityType="Self.NhatKyHeThong" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="QuyenHan" EntityType="Self.QuyenHan" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SuKien" EntityType="Self.SuKien" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ThamSoQuyDinh" EntityType="Self.ThamSoQuyDinh" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ThongBao" EntityType="Self.ThongBao" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TrangThaiDangKy" EntityType="Self.TrangThaiDangKy" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TrangThaiDiemDanh" EntityType="Self.TrangThaiDiemDanh" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TrangThaiSuKien" EntityType="Self.TrangThaiSuKien" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_DangKy_NguoiDung" Association="Self.FK_DangKy_NguoiDung">
+            <End Role="NguoiDung" EntitySet="NguoiDung" />
+            <End Role="DangKy_DiemDanh" EntitySet="DangKy_DiemDanh" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DangKy_NguoiDuyet" Association="Self.FK_DangKy_NguoiDuyet">
+            <End Role="NguoiDung" EntitySet="NguoiDung" />
+            <End Role="DangKy_DiemDanh" EntitySet="DangKy_DiemDanh" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DangKy_SuKien" Association="Self.FK_DangKy_SuKien">
+            <End Role="SuKien" EntitySet="SuKien" />
+            <End Role="DangKy_DiemDanh" EntitySet="DangKy_DiemDanh" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DangKy_TTDD" Association="Self.FK_DangKy_TTDD">
+            <End Role="TrangThaiDiemDanh" EntitySet="TrangThaiDiemDanh" />
+            <End Role="DangKy_DiemDanh" EntitySet="DangKy_DiemDanh" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DangKy_TTDK" Association="Self.FK_DangKy_TTDK">
+            <End Role="TrangThaiDangKy" EntitySet="TrangThaiDangKy" />
+            <End Role="DangKy_DiemDanh" EntitySet="DangKy_DiemDanh" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DanhMucDiem_Cha" Association="Self.FK_DanhMucDiem_Cha">
+            <End Role="DanhMucDiem" EntitySet="DanhMucDiem" />
+            <End Role="DanhMucDiem1" EntitySet="DanhMucDiem" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LopHoc_Khoa" Association="Self.FK_LopHoc_Khoa">
+            <End Role="Khoa" EntitySet="Khoa" />
+            <End Role="LopHoc" EntitySet="LopHoc" />
+          </AssociationSet>
+          <AssociationSet Name="FK_MucDiemRenLuyen_DanhMucDiem" Association="Self.FK_MucDiemRenLuyen_DanhMucDiem">
+            <End Role="DanhMucDiem" EntitySet="DanhMucDiem" />
+            <End Role="MucDiemRenLuyen" EntitySet="MucDiemRenLuyen" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NguoiDung_LopHoc" Association="Self.FK_NguoiDung_LopHoc">
+            <End Role="LopHoc" EntitySet="LopHoc" />
+            <End Role="NguoiDung" EntitySet="NguoiDung" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NguoiDung_QuyenHan" Association="Self.FK_NguoiDung_QuyenHan">
+            <End Role="QuyenHan" EntitySet="QuyenHan" />
+            <End Role="NguoiDung" EntitySet="NguoiDung" />
+          </AssociationSet>
+          <AssociationSet Name="FK_NhatKy_NguoiDung" Association="Self.FK_NhatKy_NguoiDung">
+            <End Role="NguoiDung" EntitySet="NguoiDung" />
+            <End Role="NhatKyHeThong" EntitySet="NhatKyHeThong" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SuKien_Cha" Association="Self.FK_SuKien_Cha">
+            <End Role="SuKien" EntitySet="SuKien" />
+            <End Role="SuKien1" EntitySet="SuKien" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SuKien_HocKy" Association="Self.FK_SuKien_HocKy">
+            <End Role="HocKy" EntitySet="HocKy" />
+            <End Role="SuKien" EntitySet="SuKien" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SuKien_MucDiemRenLuyen" Association="Self.FK_SuKien_MucDiemRenLuyen">
+            <End Role="MucDiemRenLuyen" EntitySet="MucDiemRenLuyen" />
+            <End Role="SuKien" EntitySet="SuKien" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SuKien_NamHoc" Association="Self.FK_SuKien_NamHoc">
+            <End Role="NamHoc" EntitySet="NamHoc" />
+            <End Role="SuKien" EntitySet="SuKien" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SuKien_NguoiTao" Association="Self.FK_SuKien_NguoiTao">
+            <End Role="NguoiDung" EntitySet="NguoiDung" />
+            <End Role="SuKien" EntitySet="SuKien" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SuKien_TrangThai" Association="Self.FK_SuKien_TrangThai">
+            <End Role="TrangThaiSuKien" EntitySet="TrangThaiSuKien" />
+            <End Role="SuKien" EntitySet="SuKien" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="QuanLy_HDNKModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="QuanLy_HDNKEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="DangKy_DiemDanh" EntityType="QuanLy_HDNKModel.DangKy_DiemDanh" />
+          <EntitySet Name="DanhMucDiems" EntityType="QuanLy_HDNKModel.DanhMucDiem" />
+          <EntitySet Name="HocKies" EntityType="QuanLy_HDNKModel.HocKy" />
+          <EntitySet Name="Khoas" EntityType="QuanLy_HDNKModel.Khoa" />
+          <EntitySet Name="LopHocs" EntityType="QuanLy_HDNKModel.LopHoc" />
+          <EntitySet Name="MucDiemRenLuyens" EntityType="QuanLy_HDNKModel.MucDiemRenLuyen" />
+          <EntitySet Name="NguoiDungs" EntityType="QuanLy_HDNKModel.NguoiDung" />
+          <EntitySet Name="NhatKyHeThongs" EntityType="QuanLy_HDNKModel.NhatKyHeThong" />
+          <EntitySet Name="QuyenHans" EntityType="QuanLy_HDNKModel.QuyenHan" />
+          <EntitySet Name="SuKiens" EntityType="QuanLy_HDNKModel.SuKien" />
+          <EntitySet Name="ThamSoQuyDinhs" EntityType="QuanLy_HDNKModel.ThamSoQuyDinh" />
+          <EntitySet Name="TrangThaiDangKies" EntityType="QuanLy_HDNKModel.TrangThaiDangKy" />
+          <EntitySet Name="TrangThaiDiemDanhs" EntityType="QuanLy_HDNKModel.TrangThaiDiemDanh" />
+          <EntitySet Name="TrangThaiSuKiens" EntityType="QuanLy_HDNKModel.TrangThaiSuKien" />
+          <AssociationSet Name="FK__DangKy_Di__MaNgu__6754599E" Association="QuanLy_HDNKModel.FK__DangKy_Di__MaNgu__6754599E">
+            <End Role="NguoiDung" EntitySet="NguoiDungs" />
+            <End Role="DangKy_DiemDanh" EntitySet="DangKy_DiemDanh" />
+          </AssociationSet>
+          <AssociationSet Name="FK__DangKy_Di__MaSuK__66603565" Association="QuanLy_HDNKModel.FK__DangKy_Di__MaSuK__66603565">
+            <End Role="SuKien" EntitySet="SuKiens" />
+            <End Role="DangKy_DiemDanh" EntitySet="DangKy_DiemDanh" />
+          </AssociationSet>
+          <AssociationSet Name="FK__DangKy_Di__MaTTD__68487DD7" Association="QuanLy_HDNKModel.FK__DangKy_Di__MaTTD__68487DD7">
+            <End Role="TrangThaiDangKy" EntitySet="TrangThaiDangKies" />
+            <End Role="DangKy_DiemDanh" EntitySet="DangKy_DiemDanh" />
+          </AssociationSet>
+          <AssociationSet Name="FK__DangKy_Di__MaTTD__693CA210" Association="QuanLy_HDNKModel.FK__DangKy_Di__MaTTD__693CA210">
+            <End Role="TrangThaiDiemDanh" EntitySet="TrangThaiDiemDanhs" />
+            <End Role="DangKy_DiemDanh" EntitySet="DangKy_DiemDanh" />
+          </AssociationSet>
+          <AssociationSet Name="FK__DangKy_Di__Nguoi__6A30C649" Association="QuanLy_HDNKModel.FK__DangKy_Di__Nguoi__6A30C649">
+            <End Role="NguoiDung" EntitySet="NguoiDungs" />
+            <End Role="DangKy_DiemDanh" EntitySet="DangKy_DiemDanh" />
+          </AssociationSet>
+          <AssociationSet Name="FK__DanhMucDi__MaDan__4AB81AF0" Association="QuanLy_HDNKModel.FK__DanhMucDi__MaDan__4AB81AF0">
+            <End Role="DanhMucDiem" EntitySet="DanhMucDiems" />
+            <End Role="DanhMucDiem1" EntitySet="DanhMucDiems" />
+          </AssociationSet>
+          <AssociationSet Name="FK__MucDiemRe__MaDan__534D60F1" Association="QuanLy_HDNKModel.FK__MucDiemRe__MaDan__534D60F1">
+            <End Role="DanhMucDiem" EntitySet="DanhMucDiems" />
+            <End Role="MucDiemRenLuyen" EntitySet="MucDiemRenLuyens" />
+          </AssociationSet>
+          <AssociationSet Name="FK__SuKien__MaHocKy__5EBF139D" Association="QuanLy_HDNKModel.FK__SuKien__MaHocKy__5EBF139D">
+            <End Role="HocKy" EntitySet="HocKies" />
+            <End Role="SuKien" EntitySet="SuKiens" />
+          </AssociationSet>
+          <AssociationSet Name="FK__LopHoc__MaKhoa__47DBAE45" Association="QuanLy_HDNKModel.FK__LopHoc__MaKhoa__47DBAE45">
+            <End Role="Khoa" EntitySet="Khoas" />
+            <End Role="LopHoc" EntitySet="LopHocs" />
+          </AssociationSet>
+          <AssociationSet Name="FK__NguoiDung__MaLop__4F7CD00D" Association="QuanLy_HDNKModel.FK__NguoiDung__MaLop__4F7CD00D">
+            <End Role="LopHoc" EntitySet="LopHocs" />
+            <End Role="NguoiDung" EntitySet="NguoiDungs" />
+          </AssociationSet>
+          <AssociationSet Name="FK__SuKien__MaMucDRL__5BE2A6F2" Association="QuanLy_HDNKModel.FK__SuKien__MaMucDRL__5BE2A6F2">
+            <End Role="MucDiemRenLuyen" EntitySet="MucDiemRenLuyens" />
+            <End Role="SuKien" EntitySet="SuKiens" />
+          </AssociationSet>
+          <AssociationSet Name="FK__NguoiDung__MaQuy__5070F446" Association="QuanLy_HDNKModel.FK__NguoiDung__MaQuy__5070F446">
+            <End Role="QuyenHan" EntitySet="QuyenHans" />
+            <End Role="NguoiDung" EntitySet="NguoiDungs" />
+          </AssociationSet>
+          <AssociationSet Name="FK__NhatKyHeT__MaNgu__6E01572D" Association="QuanLy_HDNKModel.FK__NhatKyHeT__MaNgu__6E01572D">
+            <End Role="NguoiDung" EntitySet="NguoiDungs" />
+            <End Role="NhatKyHeThong" EntitySet="NhatKyHeThongs" />
+          </AssociationSet>
+          <AssociationSet Name="FK__SuKien__MaNguoiT__5CD6CB2B" Association="QuanLy_HDNKModel.FK__SuKien__MaNguoiT__5CD6CB2B">
+            <End Role="NguoiDung" EntitySet="NguoiDungs" />
+            <End Role="SuKien" EntitySet="SuKiens" />
+          </AssociationSet>
+          <AssociationSet Name="FK__SuKien__MaTTSK__5DCAEF64" Association="QuanLy_HDNKModel.FK__SuKien__MaTTSK__5DCAEF64">
+            <End Role="TrangThaiSuKien" EntitySet="TrangThaiSuKiens" />
+            <End Role="SuKien" EntitySet="SuKiens" />
+          </AssociationSet>
+          <EntitySet Name="ThongBaos" EntityType="QuanLy_HDNKModel.ThongBao" />
+          <AssociationSet Name="FK_SuKien_Cha" Association="QuanLy_HDNKModel.FK_SuKien_Cha">
+            <End Role="SuKien" EntitySet="SuKiens" />
+            <End Role="SuKien1" EntitySet="SuKiens" />
+          </AssociationSet>
+          <EntitySet Name="NamHocs" EntityType="QuanLy_HDNKModel.NamHoc" />
+          <AssociationSet Name="FK_SuKien_NamHoc" Association="QuanLy_HDNKModel.FK_SuKien_NamHoc">
+            <End Role="NamHoc" EntitySet="NamHocs" />
+            <End Role="SuKien" EntitySet="SuKiens" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="DangKy_DiemDanh">
+          <Key>
+            <PropertyRef Name="MaDangKy" />
+          </Key>
+          <Property Name="MaDangKy" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="MaSuKien" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="MaNguoiDung" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="ThoiGianDangKy" Type="DateTime" Precision="3" Nullable="false" />
+          <Property Name="MaTTDK" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="ThoiGianDiemDanh" Type="DateTime" Precision="3" />
+          <Property Name="MinhChung" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MaTTDD" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="NguoiDuyet" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="ThoiGianDuyet" Type="DateTime" Precision="3" />
+          <Property Name="GhiChu" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="NguoiDung" Relationship="QuanLy_HDNKModel.FK__DangKy_Di__MaNgu__6754599E" FromRole="DangKy_DiemDanh" ToRole="NguoiDung" />
+          <NavigationProperty Name="SuKien" Relationship="QuanLy_HDNKModel.FK__DangKy_Di__MaSuK__66603565" FromRole="DangKy_DiemDanh" ToRole="SuKien" />
+          <NavigationProperty Name="TrangThaiDangKy" Relationship="QuanLy_HDNKModel.FK__DangKy_Di__MaTTD__68487DD7" FromRole="DangKy_DiemDanh" ToRole="TrangThaiDangKy" />
+          <NavigationProperty Name="TrangThaiDiemDanh" Relationship="QuanLy_HDNKModel.FK__DangKy_Di__MaTTD__693CA210" FromRole="DangKy_DiemDanh" ToRole="TrangThaiDiemDanh" />
+          <NavigationProperty Name="NguoiDung1" Relationship="QuanLy_HDNKModel.FK__DangKy_Di__Nguoi__6A30C649" FromRole="DangKy_DiemDanh" ToRole="NguoiDung" />
+        </EntityType>
+        <EntityType Name="DanhMucDiem">
+          <Key>
+            <PropertyRef Name="MaDanhMuc" />
+          </Key>
+          <Property Name="MaDanhMuc" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="TenDanhMuc" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="DiemToiDa" Type="Int32" Nullable="false" />
+          <Property Name="MaDanhMucCha" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="GhiChu" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="DanhMucDiem1" Relationship="QuanLy_HDNKModel.FK__DanhMucDi__MaDan__4AB81AF0" FromRole="DanhMucDiem" ToRole="DanhMucDiem1" />
+          <NavigationProperty Name="DanhMucDiem2" Relationship="QuanLy_HDNKModel.FK__DanhMucDi__MaDan__4AB81AF0" FromRole="DanhMucDiem1" ToRole="DanhMucDiem" />
+          <NavigationProperty Name="MucDiemRenLuyens" Relationship="QuanLy_HDNKModel.FK__MucDiemRe__MaDan__534D60F1" FromRole="DanhMucDiem" ToRole="MucDiemRenLuyen" />
+        </EntityType>
+        <EntityType Name="HocKy">
+          <Key>
+            <PropertyRef Name="MaHocKy" />
+          </Key>
+          <Property Name="MaHocKy" Type="String" Nullable="false" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="TenHocKy" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="TuNgay" Type="DateTime" Precision="0" />
+          <Property Name="DenNgay" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="SuKiens" Relationship="QuanLy_HDNKModel.FK__SuKien__MaHocKy__5EBF139D" FromRole="HocKy" ToRole="SuKien" />
+        </EntityType>
+        <EntityType Name="Khoa">
+          <Key>
+            <PropertyRef Name="MaKhoa" />
+          </Key>
+          <Property Name="MaKhoa" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="TenKhoa" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="LopHocs" Relationship="QuanLy_HDNKModel.FK__LopHoc__MaKhoa__47DBAE45" FromRole="Khoa" ToRole="LopHoc" />
+        </EntityType>
+        <EntityType Name="LopHoc">
+          <Key>
+            <PropertyRef Name="MaLop" />
+          </Key>
+          <Property Name="MaLop" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="TenLop" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="MaKhoa" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="KhoaHoc" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Khoa" Relationship="QuanLy_HDNKModel.FK__LopHoc__MaKhoa__47DBAE45" FromRole="LopHoc" ToRole="Khoa" />
+          <NavigationProperty Name="NguoiDungs" Relationship="QuanLy_HDNKModel.FK__NguoiDung__MaLop__4F7CD00D" FromRole="LopHoc" ToRole="NguoiDung" />
+        </EntityType>
+        <EntityType Name="MucDiemRenLuyen">
+          <Key>
+            <PropertyRef Name="MaMucDRL" />
+          </Key>
+          <Property Name="MaMucDRL" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="TenMucDRL" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Diem" Type="Int32" Nullable="false" />
+          <Property Name="MaDanhMuc" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="DanhMucDiem" Relationship="QuanLy_HDNKModel.FK__MucDiemRe__MaDan__534D60F1" FromRole="MucDiemRenLuyen" ToRole="DanhMucDiem" />
+          <NavigationProperty Name="SuKiens" Relationship="QuanLy_HDNKModel.FK__SuKien__MaMucDRL__5BE2A6F2" FromRole="MucDiemRenLuyen" ToRole="SuKien" />
+        </EntityType>
+        <EntityType Name="NguoiDung">
+          <Key>
+            <PropertyRef Name="MaNguoiDung" />
+          </Key>
+          <Property Name="MaNguoiDung" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="MaSinhVien" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MatKhau" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="HoTen" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="NgaySinh" Type="DateTime" Precision="0" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="MaLop" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="MaQuyen" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="DangKy_DiemDanh" Relationship="QuanLy_HDNKModel.FK__DangKy_Di__MaNgu__6754599E" FromRole="NguoiDung" ToRole="DangKy_DiemDanh" />
+          <NavigationProperty Name="DangKy_DiemDanh1" Relationship="QuanLy_HDNKModel.FK__DangKy_Di__Nguoi__6A30C649" FromRole="NguoiDung" ToRole="DangKy_DiemDanh" />
+          <NavigationProperty Name="LopHoc" Relationship="QuanLy_HDNKModel.FK__NguoiDung__MaLop__4F7CD00D" FromRole="NguoiDung" ToRole="LopHoc" />
+          <NavigationProperty Name="QuyenHan" Relationship="QuanLy_HDNKModel.FK__NguoiDung__MaQuy__5070F446" FromRole="NguoiDung" ToRole="QuyenHan" />
+          <NavigationProperty Name="NhatKyHeThongs" Relationship="QuanLy_HDNKModel.FK__NhatKyHeT__MaNgu__6E01572D" FromRole="NguoiDung" ToRole="NhatKyHeThong" />
+          <NavigationProperty Name="SuKiens" Relationship="QuanLy_HDNKModel.FK__SuKien__MaNguoiT__5CD6CB2B" FromRole="NguoiDung" ToRole="SuKien" />
+        </EntityType>
+        <EntityType Name="NhatKyHeThong">
+          <Key>
+            <PropertyRef Name="MaNhatKy" />
+          </Key>
+          <Property Name="MaNhatKy" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="MaNguoiDung" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="ChiTiet" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ThoiGian" Type="DateTime" Precision="3" Nullable="false" />
+          <NavigationProperty Name="NguoiDung" Relationship="QuanLy_HDNKModel.FK__NhatKyHeT__MaNgu__6E01572D" FromRole="NhatKyHeThong" ToRole="NguoiDung" />
+        </EntityType>
+        <EntityType Name="QuyenHan">
+          <Key>
+            <PropertyRef Name="MaQuyen" />
+          </Key>
+          <Property Name="MaQuyen" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="TenQuyen" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="MoTa" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="NguoiDungs" Relationship="QuanLy_HDNKModel.FK__NguoiDung__MaQuy__5070F446" FromRole="QuyenHan" ToRole="NguoiDung" />
+        </EntityType>
+        <EntityType Name="SuKien">
+          <Key>
+            <PropertyRef Name="MaSuKien" />
+          </Key>
+          <Property Name="MaSuKien" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="TenSuKien" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Noidung" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ThoiGianBatDau" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ThoiGianKetThuc" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="MaHocKy" Type="String" Nullable="false" MaxLength="3" FixedLength="false" Unicode="false" />
+          <Property Name="MaNamHoc" Type="String" Nullable="false" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="DiaDiem" Type="String" Nullable="false" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="SoLuongToiDa" Type="Int32" />
+          <Property Name="MaMucDRL" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="CapToChuc" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MaNguoiTao" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="MaTTSK" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="LyDoHuy" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SoLuongDaDangKy" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="DangKy_DiemDanh" Relationship="QuanLy_HDNKModel.FK__DangKy_Di__MaSuK__66603565" FromRole="SuKien" ToRole="DangKy_DiemDanh" />
+          <NavigationProperty Name="HocKy" Relationship="QuanLy_HDNKModel.FK__SuKien__MaHocKy__5EBF139D" FromRole="SuKien" ToRole="HocKy" />
+          <NavigationProperty Name="MucDiemRenLuyen" Relationship="QuanLy_HDNKModel.FK__SuKien__MaMucDRL__5BE2A6F2" FromRole="SuKien" ToRole="MucDiemRenLuyen" />
+          <NavigationProperty Name="NguoiDung" Relationship="QuanLy_HDNKModel.FK__SuKien__MaNguoiT__5CD6CB2B" FromRole="SuKien" ToRole="NguoiDung" />
+          <NavigationProperty Name="TrangThaiSuKien" Relationship="QuanLy_HDNKModel.FK__SuKien__MaTTSK__5DCAEF64" FromRole="SuKien" ToRole="TrangThaiSuKien" />
+          <Property Name="MaSuKienCha" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="SuKien1" Relationship="QuanLy_HDNKModel.FK_SuKien_Cha" FromRole="SuKien" ToRole="SuKien1" />
+          <NavigationProperty Name="SuKien2" Relationship="QuanLy_HDNKModel.FK_SuKien_Cha" FromRole="SuKien1" ToRole="SuKien" />
+          <NavigationProperty Name="NamHoc" Relationship="QuanLy_HDNKModel.FK_SuKien_NamHoc" FromRole="SuKien" ToRole="NamHoc" />
+        </EntityType>
+        <EntityType Name="ThamSoQuyDinh">
+          <Key>
+            <PropertyRef Name="MaTS" />
+          </Key>
+          <Property Name="MaTS" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="TenTS" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="GiaTri" Type="Double" Nullable="false" />
+          <Property Name="DonViTinh" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="TinhTrang" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="TrangThaiDangKy">
+          <Key>
+            <PropertyRef Name="MaTTDK" />
+          </Key>
+          <Property Name="MaTTDK" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="TenTTDK" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="DangKy_DiemDanh" Relationship="QuanLy_HDNKModel.FK__DangKy_Di__MaTTD__68487DD7" FromRole="TrangThaiDangKy" ToRole="DangKy_DiemDanh" />
+        </EntityType>
+        <EntityType Name="TrangThaiDiemDanh">
+          <Key>
+            <PropertyRef Name="MaTTDD" />
+          </Key>
+          <Property Name="MaTTDD" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="TenTTDD" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="DangKy_DiemDanh" Relationship="QuanLy_HDNKModel.FK__DangKy_Di__MaTTD__693CA210" FromRole="TrangThaiDiemDanh" ToRole="DangKy_DiemDanh" />
+        </EntityType>
+        <EntityType Name="TrangThaiSuKien">
+          <Key>
+            <PropertyRef Name="MaTTSK" />
+          </Key>
+          <Property Name="MaTTSK" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="TenTTSK" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="SuKiens" Relationship="QuanLy_HDNKModel.FK__SuKien__MaTTSK__5DCAEF64" FromRole="TrangThaiSuKien" ToRole="SuKien" />
+        </EntityType>
+        <Association Name="FK__DangKy_Di__MaNgu__6754599E">
+          <End Type="QuanLy_HDNKModel.NguoiDung" Role="NguoiDung" Multiplicity="1" />
+          <End Type="QuanLy_HDNKModel.DangKy_DiemDanh" Role="DangKy_DiemDanh" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="DangKy_DiemDanh">
+              <PropertyRef Name="MaNguoiDung" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__DangKy_Di__MaSuK__66603565">
+          <End Type="QuanLy_HDNKModel.SuKien" Role="SuKien" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="QuanLy_HDNKModel.DangKy_DiemDanh" Role="DangKy_DiemDanh" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SuKien">
+              <PropertyRef Name="MaSuKien" />
+            </Principal>
+            <Dependent Role="DangKy_DiemDanh">
+              <PropertyRef Name="MaSuKien" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__DangKy_Di__MaTTD__68487DD7">
+          <End Type="QuanLy_HDNKModel.TrangThaiDangKy" Role="TrangThaiDangKy" Multiplicity="1" />
+          <End Type="QuanLy_HDNKModel.DangKy_DiemDanh" Role="DangKy_DiemDanh" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TrangThaiDangKy">
+              <PropertyRef Name="MaTTDK" />
+            </Principal>
+            <Dependent Role="DangKy_DiemDanh">
+              <PropertyRef Name="MaTTDK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__DangKy_Di__MaTTD__693CA210">
+          <End Type="QuanLy_HDNKModel.TrangThaiDiemDanh" Role="TrangThaiDiemDanh" Multiplicity="1" />
+          <End Type="QuanLy_HDNKModel.DangKy_DiemDanh" Role="DangKy_DiemDanh" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TrangThaiDiemDanh">
+              <PropertyRef Name="MaTTDD" />
+            </Principal>
+            <Dependent Role="DangKy_DiemDanh">
+              <PropertyRef Name="MaTTDD" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__DangKy_Di__Nguoi__6A30C649">
+          <End Type="QuanLy_HDNKModel.NguoiDung" Role="NguoiDung" Multiplicity="0..1" />
+          <End Type="QuanLy_HDNKModel.DangKy_DiemDanh" Role="DangKy_DiemDanh" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="DangKy_DiemDanh">
+              <PropertyRef Name="NguoiDuyet" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__DanhMucDi__MaDan__4AB81AF0">
+          <End Type="QuanLy_HDNKModel.DanhMucDiem" Role="DanhMucDiem" Multiplicity="0..1" />
+          <End Type="QuanLy_HDNKModel.DanhMucDiem" Role="DanhMucDiem1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DanhMucDiem">
+              <PropertyRef Name="MaDanhMuc" />
+            </Principal>
+            <Dependent Role="DanhMucDiem1">
+              <PropertyRef Name="MaDanhMucCha" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__MucDiemRe__MaDan__534D60F1">
+          <End Type="QuanLy_HDNKModel.DanhMucDiem" Role="DanhMucDiem" Multiplicity="1" />
+          <End Type="QuanLy_HDNKModel.MucDiemRenLuyen" Role="MucDiemRenLuyen" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DanhMucDiem">
+              <PropertyRef Name="MaDanhMuc" />
+            </Principal>
+            <Dependent Role="MucDiemRenLuyen">
+              <PropertyRef Name="MaDanhMuc" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__SuKien__MaHocKy__5EBF139D">
+          <End Type="QuanLy_HDNKModel.HocKy" Role="HocKy" Multiplicity="1" />
+          <End Type="QuanLy_HDNKModel.SuKien" Role="SuKien" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="HocKy">
+              <PropertyRef Name="MaHocKy" />
+            </Principal>
+            <Dependent Role="SuKien">
+              <PropertyRef Name="MaHocKy" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__LopHoc__MaKhoa__47DBAE45">
+          <End Type="QuanLy_HDNKModel.Khoa" Role="Khoa" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="QuanLy_HDNKModel.LopHoc" Role="LopHoc" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Khoa">
+              <PropertyRef Name="MaKhoa" />
+            </Principal>
+            <Dependent Role="LopHoc">
+              <PropertyRef Name="MaKhoa" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__NguoiDung__MaLop__4F7CD00D">
+          <End Type="QuanLy_HDNKModel.LopHoc" Role="LopHoc" Multiplicity="0..1" />
+          <End Type="QuanLy_HDNKModel.NguoiDung" Role="NguoiDung" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="LopHoc">
+              <PropertyRef Name="MaLop" />
+            </Principal>
+            <Dependent Role="NguoiDung">
+              <PropertyRef Name="MaLop" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__SuKien__MaMucDRL__5BE2A6F2">
+          <End Type="QuanLy_HDNKModel.MucDiemRenLuyen" Role="MucDiemRenLuyen" Multiplicity="1" />
+          <End Type="QuanLy_HDNKModel.SuKien" Role="SuKien" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="MucDiemRenLuyen">
+              <PropertyRef Name="MaMucDRL" />
+            </Principal>
+            <Dependent Role="SuKien">
+              <PropertyRef Name="MaMucDRL" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__NguoiDung__MaQuy__5070F446">
+          <End Type="QuanLy_HDNKModel.QuyenHan" Role="QuyenHan" Multiplicity="1" />
+          <End Type="QuanLy_HDNKModel.NguoiDung" Role="NguoiDung" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="QuyenHan">
+              <PropertyRef Name="MaQuyen" />
+            </Principal>
+            <Dependent Role="NguoiDung">
+              <PropertyRef Name="MaQuyen" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__NhatKyHeT__MaNgu__6E01572D">
+          <End Type="QuanLy_HDNKModel.NguoiDung" Role="NguoiDung" Multiplicity="0..1" />
+          <End Type="QuanLy_HDNKModel.NhatKyHeThong" Role="NhatKyHeThong" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="NhatKyHeThong">
+              <PropertyRef Name="MaNguoiDung" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__SuKien__MaNguoiT__5CD6CB2B">
+          <End Type="QuanLy_HDNKModel.NguoiDung" Role="NguoiDung" Multiplicity="1" />
+          <End Type="QuanLy_HDNKModel.SuKien" Role="SuKien" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NguoiDung">
+              <PropertyRef Name="MaNguoiDung" />
+            </Principal>
+            <Dependent Role="SuKien">
+              <PropertyRef Name="MaNguoiTao" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK__SuKien__MaTTSK__5DCAEF64">
+          <End Type="QuanLy_HDNKModel.TrangThaiSuKien" Role="TrangThaiSuKien" Multiplicity="1" />
+          <End Type="QuanLy_HDNKModel.SuKien" Role="SuKien" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="TrangThaiSuKien">
+              <PropertyRef Name="MaTTSK" />
+            </Principal>
+            <Dependent Role="SuKien">
+              <PropertyRef Name="MaTTSK" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ThongBao">
+          <Key>
+            <PropertyRef Name="MaThongBao" />
+          </Key>
+          <Property Name="MaThongBao" Type="String" Nullable="false" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="MaNguoiNhan" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="TieuDe" Type="String" Nullable="false" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="NoiDung" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="DuongDan" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Loai" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="MaLienQuan" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="DaDoc" Type="Boolean" Nullable="false" />
+          <Property Name="ThoiGianTao" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="ThoiGianDoc" Type="DateTime" Precision="3" />
+        </EntityType>
+        <Association Name="FK_SuKien_Cha">
+          <End Type="QuanLy_HDNKModel.SuKien" Role="SuKien" Multiplicity="0..1" />
+          <End Type="QuanLy_HDNKModel.SuKien" Role="SuKien1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SuKien">
+              <PropertyRef Name="MaSuKien" />
+            </Principal>
+            <Dependent Role="SuKien1">
+              <PropertyRef Name="MaSuKienCha" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="NamHoc">
+          <Key>
+            <PropertyRef Name="MaNamHoc" />
+          </Key>
+          <Property Name="MaNamHoc" Type="String" Nullable="false" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="TenNamHoc" Type="String" Nullable="false" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="TuNgay" Type="DateTime" Precision="0" />
+          <Property Name="DenNgay" Type="DateTime" Precision="0" />
+          <NavigationProperty Name="SuKiens" Relationship="QuanLy_HDNKModel.FK_SuKien_NamHoc" FromRole="NamHoc" ToRole="SuKien" />
+        </EntityType>
+        <Association Name="FK_SuKien_NamHoc">
+          <End Type="QuanLy_HDNKModel.NamHoc" Role="NamHoc" Multiplicity="1" />
+          <End Type="QuanLy_HDNKModel.SuKien" Role="SuKien" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="NamHoc">
+              <PropertyRef Name="MaNamHoc" />
+            </Principal>
+            <Dependent Role="SuKien">
+              <PropertyRef Name="MaNamHoc" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="StoreContainer" CdmEntityContainer="QuanLy_HDNKEntities" >
+          <EntitySetMapping Name="DangKy_DiemDanh">
+            <EntityTypeMapping TypeName="QuanLy_HDNKModel.DangKy_DiemDanh">
+              <MappingFragment StoreEntitySet="DangKy_DiemDanh">
+                <ScalarProperty Name="GhiChu" ColumnName="GhiChu" />
+                <ScalarProperty Name="ThoiGianDuyet" ColumnName="ThoiGianDuyet" />
+                <ScalarProperty Name="NguoiDuyet" ColumnName="NguoiDuyet" />
+                <ScalarProperty Name="MaTTDD" ColumnName="MaTTDD" />
+                <ScalarProperty Name="MinhChung" ColumnName="MinhChung" />
+                <ScalarProperty Name="ThoiGianDiemDanh" ColumnName="ThoiGianDiemDanh" />
+                <ScalarProperty Name="MaTTDK" ColumnName="MaTTDK" />
+                <ScalarProperty Name="ThoiGianDangKy" ColumnName="ThoiGianDangKy" />
+                <ScalarProperty Name="MaNguoiDung" ColumnName="MaNguoiDung" />
+                <ScalarProperty Name="MaSuKien" ColumnName="MaSuKien" />
+                <ScalarProperty Name="MaDangKy" ColumnName="MaDangKy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DanhMucDiems">
+            <EntityTypeMapping TypeName="QuanLy_HDNKModel.DanhMucDiem">
+              <MappingFragment StoreEntitySet="DanhMucDiem">
+                <ScalarProperty Name="GhiChu" ColumnName="GhiChu" />
+                <ScalarProperty Name="MaDanhMucCha" ColumnName="MaDanhMucCha" />
+                <ScalarProperty Name="DiemToiDa" ColumnName="DiemToiDa" />
+                <ScalarProperty Name="TenDanhMuc" ColumnName="TenDanhMuc" />
+                <ScalarProperty Name="MaDanhMuc" ColumnName="MaDanhMuc" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="HocKies">
+            <EntityTypeMapping TypeName="QuanLy_HDNKModel.HocKy">
+              <MappingFragment StoreEntitySet="HocKy">
+                <ScalarProperty Name="DenNgay" ColumnName="DenNgay" />
+                <ScalarProperty Name="TuNgay" ColumnName="TuNgay" />
+                <ScalarProperty Name="TenHocKy" ColumnName="TenHocKy" />
+                <ScalarProperty Name="MaHocKy" ColumnName="MaHocKy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Khoas">
+            <EntityTypeMapping TypeName="QuanLy_HDNKModel.Khoa">
+              <MappingFragment StoreEntitySet="Khoa">
+                <ScalarProperty Name="TenKhoa" ColumnName="TenKhoa" />
+                <ScalarProperty Name="MaKhoa" ColumnName="MaKhoa" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LopHocs">
+            <EntityTypeMapping TypeName="QuanLy_HDNKModel.LopHoc">
+              <MappingFragment StoreEntitySet="LopHoc">
+                <ScalarProperty Name="KhoaHoc" ColumnName="KhoaHoc" />
+                <ScalarProperty Name="MaKhoa" ColumnName="MaKhoa" />
+                <ScalarProperty Name="TenLop" ColumnName="TenLop" />
+                <ScalarProperty Name="MaLop" ColumnName="MaLop" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="MucDiemRenLuyens">
+            <EntityTypeMapping TypeName="QuanLy_HDNKModel.MucDiemRenLuyen">
+              <MappingFragment StoreEntitySet="MucDiemRenLuyen">
+                <ScalarProperty Name="MaDanhMuc" ColumnName="MaDanhMuc" />
+                <ScalarProperty Name="Diem" ColumnName="Diem" />
+                <ScalarProperty Name="TenMucDRL" ColumnName="TenMucDRL" />
+                <ScalarProperty Name="MaMucDRL" ColumnName="MaMucDRL" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NguoiDungs">
+            <EntityTypeMapping TypeName="QuanLy_HDNKModel.NguoiDung">
+              <MappingFragment StoreEntitySet="NguoiDung">
+                <ScalarProperty Name="MaQuyen" ColumnName="MaQuyen" />
+                <ScalarProperty Name="MaLop" ColumnName="MaLop" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="NgaySinh" ColumnName="NgaySinh" />
+                <ScalarProperty Name="HoTen" ColumnName="HoTen" />
+                <ScalarProperty Name="MatKhau" ColumnName="MatKhau" />
+                <ScalarProperty Name="MaSinhVien" ColumnName="MaSinhVien" />
+                <ScalarProperty Name="MaNguoiDung" ColumnName="MaNguoiDung" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NhatKyHeThongs">
+            <EntityTypeMapping TypeName="QuanLy_HDNKModel.NhatKyHeThong">
+              <MappingFragment StoreEntitySet="NhatKyHeThong">
+                <ScalarProperty Name="ThoiGian" ColumnName="ThoiGian" />
+                <ScalarProperty Name="ChiTiet" ColumnName="ChiTiet" />
+                <ScalarProperty Name="MaNguoiDung" ColumnName="MaNguoiDung" />
+                <ScalarProperty Name="MaNhatKy" ColumnName="MaNhatKy" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="QuyenHans">
+            <EntityTypeMapping TypeName="QuanLy_HDNKModel.QuyenHan">
+              <MappingFragment StoreEntitySet="QuyenHan">
+                <ScalarProperty Name="MoTa" ColumnName="MoTa" />
+                <ScalarProperty Name="TenQuyen" ColumnName="TenQuyen" />
+                <ScalarProperty Name="MaQuyen" ColumnName="MaQuyen" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SuKiens">
+            <EntityTypeMapping TypeName="QuanLy_HDNKModel.SuKien">
+              <MappingFragment StoreEntitySet="SuKien">
+                <ScalarProperty Name="MaSuKienCha" ColumnName="MaSuKienCha" />
+                <ScalarProperty Name="SoLuongDaDangKy" ColumnName="SoLuongDaDangKy" />
+                <ScalarProperty Name="LyDoHuy" ColumnName="LyDoHuy" />
+                <ScalarProperty Name="MaTTSK" ColumnName="MaTTSK" />
+                <ScalarProperty Name="MaNguoiTao" ColumnName="MaNguoiTao" />
+                <ScalarProperty Name="CapToChuc" ColumnName="CapToChuc" />
+                <ScalarProperty Name="MaMucDRL" ColumnName="MaMucDRL" />
+                <ScalarProperty Name="SoLuongToiDa" ColumnName="SoLuongToiDa" />
+                <ScalarProperty Name="DiaDiem" ColumnName="DiaDiem" />
+                <ScalarProperty Name="MaNamHoc" ColumnName="MaNamHoc" />
+                <ScalarProperty Name="MaHocKy" ColumnName="MaHocKy" />
+                <ScalarProperty Name="ThoiGianKetThuc" ColumnName="ThoiGianKetThuc" />
+                <ScalarProperty Name="ThoiGianBatDau" ColumnName="ThoiGianBatDau" />
+                <ScalarProperty Name="Noidung" ColumnName="Noidung" />
+                <ScalarProperty Name="TenSuKien" ColumnName="TenSuKien" />
+                <ScalarProperty Name="MaSuKien" ColumnName="MaSuKien" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ThamSoQuyDinhs">
+            <EntityTypeMapping TypeName="QuanLy_HDNKModel.ThamSoQuyDinh">
+              <MappingFragment StoreEntitySet="ThamSoQuyDinh">
+                <ScalarProperty Name="TinhTrang" ColumnName="TinhTrang" />
+                <ScalarProperty Name="DonViTinh" ColumnName="DonViTinh" />
+                <ScalarProperty Name="GiaTri" ColumnName="GiaTri" />
+                <ScalarProperty Name="TenTS" ColumnName="TenTS" />
+                <ScalarProperty Name="MaTS" ColumnName="MaTS" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TrangThaiDangKies">
+            <EntityTypeMapping TypeName="QuanLy_HDNKModel.TrangThaiDangKy">
+              <MappingFragment StoreEntitySet="TrangThaiDangKy">
+                <ScalarProperty Name="TenTTDK" ColumnName="TenTTDK" />
+                <ScalarProperty Name="MaTTDK" ColumnName="MaTTDK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TrangThaiDiemDanhs">
+            <EntityTypeMapping TypeName="QuanLy_HDNKModel.TrangThaiDiemDanh">
+              <MappingFragment StoreEntitySet="TrangThaiDiemDanh">
+                <ScalarProperty Name="TenTTDD" ColumnName="TenTTDD" />
+                <ScalarProperty Name="MaTTDD" ColumnName="MaTTDD" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TrangThaiSuKiens">
+            <EntityTypeMapping TypeName="QuanLy_HDNKModel.TrangThaiSuKien">
+              <MappingFragment StoreEntitySet="TrangThaiSuKien">
+                <ScalarProperty Name="TenTTSK" ColumnName="TenTTSK" />
+                <ScalarProperty Name="MaTTSK" ColumnName="MaTTSK" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ThongBaos">
+            <EntityTypeMapping TypeName="QuanLy_HDNKModel.ThongBao">
+              <MappingFragment StoreEntitySet="ThongBao">
+                <ScalarProperty Name="ThoiGianDoc" ColumnName="ThoiGianDoc" />
+                <ScalarProperty Name="ThoiGianTao" ColumnName="ThoiGianTao" />
+                <ScalarProperty Name="DaDoc" ColumnName="DaDoc" />
+                <ScalarProperty Name="MaLienQuan" ColumnName="MaLienQuan" />
+                <ScalarProperty Name="Loai" ColumnName="Loai" />
+                <ScalarProperty Name="DuongDan" ColumnName="DuongDan" />
+                <ScalarProperty Name="NoiDung" ColumnName="NoiDung" />
+                <ScalarProperty Name="TieuDe" ColumnName="TieuDe" />
+                <ScalarProperty Name="MaNguoiNhan" ColumnName="MaNguoiNhan" />
+                <ScalarProperty Name="MaThongBao" ColumnName="MaThongBao" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="NamHocs">
+            <EntityTypeMapping TypeName="QuanLy_HDNKModel.NamHoc">
+              <MappingFragment StoreEntitySet="NamHoc">
+                <ScalarProperty Name="DenNgay" ColumnName="DenNgay" />
+                <ScalarProperty Name="TuNgay" ColumnName="TuNgay" />
+                <ScalarProperty Name="TenNamHoc" ColumnName="TenNamHoc" />
+                <ScalarProperty Name="MaNamHoc" ColumnName="MaNamHoc" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="False" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

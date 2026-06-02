@@ -1,0 +1,36 @@
+﻿@model IEnumerable<QL_HDNK.Models.TrangThaiSuKien>
+
+@{
+    ViewBag.Title = "Danh sách";
+}
+
+<h2>Danh sách</h2>
+
+<p>
+    @Html.ActionLink("Thêm mới", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.TenTTSK)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.TenTTSK)
+        </td>
+        <td>
+            @Html.ActionLink("Sửa", "Edit", new { id=item.MaTTSK }) |
+            @Html.ActionLink("Chi tiết", "Details", new { id=item.MaTTSK }) |
+            @Html.ActionLink("Xóa", "Delete", new { id=item.MaTTSK })
+        </td>
+    </tr>
+}
+
+</table>
+
+
+
