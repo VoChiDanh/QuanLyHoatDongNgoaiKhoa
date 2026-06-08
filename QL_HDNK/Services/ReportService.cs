@@ -61,6 +61,7 @@ namespace QL_HDNK.Services
                 sheet.Row(headerRow).Height = 40;
 
                 var row = headerRow;
+                var maxCellValue = report.Rows.SelectMany(r => r.Cells).Select(c => report.CheDo == "phan-tram" ? (double)c.TyLeThamGia : c.SoLuongThamGia).DefaultIfEmpty(0).Max();
                 foreach (var ev in report.Events)
                 {
                     row++;
@@ -74,6 +75,7 @@ namespace QL_HDNK.Services
                         var cellData = lop.Cells.FirstOrDefault(x => x.MaSuKien == ev.MaSuKien);
                         if (cellData != null)
                         {
+                            var raw = report.CheDo == "phan-tram" ? (double)cellData.TyLeThamGia : cellData.SoLuongThamGia;
                             if (report.CheDo == "phan-tram")
                             {
                                 sheet.Cell(row, c).Value = cellData.TyLeThamGia / 100m;
@@ -83,7 +85,8 @@ namespace QL_HDNK.Services
                             {
                                 sheet.Cell(row, c).Value = cellData.SoLuongThamGia;
                             }
-                            sheet.Cell(row, c).Style.Fill.BackgroundColor = HeatColor(cellData.SoLuongThamGia, cellData.SiSo);
+                            sheet.Cell(row, c).Style.Fill.BackgroundColor = HeatColor(raw, maxCellValue);
+                            sheet.Cell(row, c).Style.Font.FontColor = XLColor.FromHtml("#123f69");
                         }
                         c++;
                     }
@@ -112,6 +115,9 @@ namespace QL_HDNK.Services
             {
                 var document = new PdfDocument();
                 document.Info.Title = "Báo cáo tham gia hoạt động toàn khoa";
+                var maxCellValue = report.Rows.SelectMany(r => r.Cells).Select(c => report.CheDo == "phan-tram" ? (double)c.TyLeThamGia : c.SoLuongThamGia).DefaultIfEmpty(0).Max();
+
+                DrawHeaderImage(document, report.HeaderImageBase64);
 
                 if (report.Rows == null || !report.Rows.Any())
                 {
@@ -125,7 +131,7 @@ namespace QL_HDNK.Services
                     var classCount = report.Rows.Count;
                     for (var start = 0; start < classCount; start += classesPerPage)
                     {
-                        DrawFacultyPdfPage(document, report, start, Math.Min(classesPerPage, classCount - start));
+                        DrawFacultyPdfPage(document, report, start, Math.Min(classesPerPage, classCount - start), maxCellValue);
                     }
                 }
 
@@ -134,7 +140,7 @@ namespace QL_HDNK.Services
             }
         }
 
-        private void DrawFacultyPdfPage(PdfDocument document, FacultyReportViewModel report, int start, int take)
+        private void DrawFacultyPdfPage(PdfDocument document, FacultyReportViewModel report, int start, int take, double maxCellValue)
         {
             var page = document.AddPage();
             page.Orientation = PdfSharp.PageOrientation.Landscape;
@@ -191,8 +197,9 @@ namespace QL_HDNK.Services
                     var cell = row.Cells.FirstOrDefault(c => c.MaSuKien == ev.MaSuKien);
                     if (cell != null)
                     {
+                        var raw = report.CheDo == "phan-tram" ? (double)cell.TyLeThamGia : cell.SoLuongThamGia;
                         var val = report.CheDo == "phan-tram" ? cell.TyLeThamGia.ToString("0.0") + "%" : cell.SoLuongThamGia.ToString();
-                        DrawCell(gfx, bold, val, x, y, colWidth, rowHeight, true, PdfHeatColor(cell.SoLuongThamGia, cell.SiSo));
+                        DrawCell(gfx, bold, val, x, y, colWidth, rowHeight, true, PdfHeatColor(raw, maxCellValue), new XSolidBrush(XColor.FromArgb(18, 63, 105)));
                     }
                     else DrawCell(gfx, font, "-", x, y, colWidth, rowHeight, true);
                     x += colWidth;
@@ -347,6 +354,8 @@ namespace QL_HDNK.Services
                 var document = new PdfDocument();
                 document.Info.Title = "Thống kê tham gia hoạt động lớp";
 
+                DrawHeaderImage(document, report.HeaderImageBase64);
+
                 if (report.Rows == null || !report.Rows.Any())
                 {
                     var page = document.AddPage();
@@ -463,6 +472,49 @@ namespace QL_HDNK.Services
 
         #region Helpers
 
+        private void DrawHeaderImage(PdfDocument document, string base64)
+        {
+            if (string.IsNullOrEmpty(base64)) return;
+            try
+            {
+                var base64Data = base64.Substring(base64.IndexOf(",") + 1);
+                var imageBytes = Convert.FromBase64String(base64Data);
+                using (var ms = new MemoryStream(imageBytes))
+                {
+                    var image = XImage.FromStream(ms);
+                    
+                    var tempPage = document.AddPage();
+                    tempPage.Orientation = PdfSharp.PageOrientation.Landscape;
+                    
+                    double margin = 40;
+                    double targetWidth = tempPage.Width.Point - (2 * margin);
+                    double pageHeight = tempPage.Height.Point - (2 * margin);
+                    
+                    double ratio = targetWidth / image.PixelWidth;
+                    double scaledHeight = image.PixelHeight * ratio;
+                    
+                    int pagesNeeded = (int)Math.Ceiling(scaledHeight / pageHeight);
+                    
+                    for (int i = 0; i < pagesNeeded; i++)
+                    {
+                        var page = i == 0 ? tempPage : document.AddPage();
+                        if (i > 0) page.Orientation = PdfSharp.PageOrientation.Landscape;
+                        
+                        var gfx = XGraphics.FromPdfPage(page);
+                        
+                        gfx.Save();
+                        gfx.IntersectClip(new XRect(margin, margin, targetWidth, pageHeight));
+                        
+                        double yOffset = margin - (i * pageHeight);
+                        gfx.DrawImage(image, margin, yOffset, targetWidth, scaledHeight);
+                        
+                        gfx.Restore();
+                    }
+                }
+            }
+            catch { }
+        }
+
         private void EnsureFontResolver() { if (GlobalFontSettings.FontResolver == null) GlobalFontSettings.FontResolver = new WindowsFontResolver(); }
 
         private static void DrawHeaderCell(XGraphics gfx, XFont font, string text, double x, double y, double width, double height)
@@ -515,22 +567,22 @@ namespace QL_HDNK.Services
 
         private static XRect Rect(double x, double y, double width, double height) => new XRect(x, y, width, height);
 
-        private static XLColor HeatColor(int val, int total)
+        private static XLColor HeatColor(double val, double maxVal)
         {
-            var ratio = total == 0 ? 0 : (double)val / total;
-            if (ratio >= 0.75) return XLColor.FromHtml("#d8f3dc");
-            if (ratio >= 0.5) return XLColor.FromHtml("#fff3bf");
-            if (ratio > 0) return XLColor.FromHtml("#ffe3d5");
-            return XLColor.FromHtml("#f5f7fa");
+            var heat = maxVal <= 0 ? 0.06 : 0.06 + (val / maxVal * 0.42);
+            int r = (int)(24 * heat + 255 * (1 - heat));
+            int g = (int)(100 * heat + 255 * (1 - heat));
+            int b = (int)(171 * heat + 255 * (1 - heat));
+            return XLColor.FromArgb(r, g, b);
         }
 
-        private static XColor PdfHeatColor(int val, int total)
+        private static XColor PdfHeatColor(double val, double maxVal)
         {
-            var ratio = total == 0 ? 0 : (double)val / total;
-            if (ratio >= 0.75) return XColor.FromArgb(216, 243, 220);
-            if (ratio >= 0.5) return XColor.FromArgb(255, 243, 191);
-            if (ratio > 0) return XColor.FromArgb(255, 227, 213);
-            return XColor.FromArgb(245, 247, 250);
+            var heat = maxVal <= 0 ? 0.06 : 0.06 + (val / maxVal * 0.42);
+            int r = (int)(24 * heat + 255 * (1 - heat));
+            int g = (int)(100 * heat + 255 * (1 - heat));
+            int b = (int)(171 * heat + 255 * (1 - heat));
+            return XColor.FromArgb(r, g, b);
         }
 
         #endregion

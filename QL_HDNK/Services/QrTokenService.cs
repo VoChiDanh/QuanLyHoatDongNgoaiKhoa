@@ -9,7 +9,7 @@ namespace QL_HDNK.Services
     {
         private const int DefaultQrIntervalSeconds = 20;
         private const int DefaultAllowedQrWindows = 1;
-        private const int DefaultSubmissionMinutes = 10;
+        private const int DefaultSubmissionMinutes = 1;
         private const string QrPrefix = "qr";
         private const string SubmissionPrefix = "form";
 

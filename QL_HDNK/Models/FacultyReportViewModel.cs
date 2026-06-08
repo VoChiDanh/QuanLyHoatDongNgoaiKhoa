@@ -10,6 +10,7 @@ namespace QL_HDNK.Models
         public string MaNamHoc { get; set; }
         public string MaHocKy { get; set; }
         public string CheDo { get; set; }
+        public string HeaderImageBase64 { get; set; }
 
         public SelectList KhoaList { get; set; }
         public SelectList NamHocList { get; set; }

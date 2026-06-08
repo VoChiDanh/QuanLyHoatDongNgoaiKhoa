@@ -157,13 +157,15 @@ namespace QL_HDNK.Controllers
 
             if (suKien == null || string.IsNullOrEmpty(userId))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                ViewBag.ErrorMessage = "Yêu cầu không hợp lệ hoặc sự kiện không tồn tại.";
+                return View("Error");
             }
 
             // Kiểm tra quyền truy cập sự kiện (cấp khoa/cấp lớp)
             if (!CanAccessEvent(suKien))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                ViewBag.ErrorMessage = "Bạn không có quyền truy cập sự kiện này.";
+                return View("Error");
             }
 
             // Kiểm tra trạng thái mở đăng ký và giới hạn số lượng
@@ -422,8 +424,7 @@ namespace QL_HDNK.Controllers
                 // Kiểm tra xem danh mục có phải là mục bắt buộc (như điểm danh đầy đủ các buổi sinh hoạt, chào cờ...)
                 bool isMandatory = danhMuc.TenDanhMuc.ToLower().Contains("chào cờ") ||
                                    danhMuc.TenDanhMuc.ToLower().Contains("sinh hoạt") ||
-                                   danhMuc.TenDanhMuc.ToLower().Contains("đầy đủ") ||
-                                   danhMuc.TenDanhMuc.ToLower().Contains("chính trị");
+                                   danhMuc.TenDanhMuc.ToLower().Contains("đầy đủ");
 
                 var danhMucVM = new DiemRenLuyenDanhMuc
                 {
@@ -564,19 +565,22 @@ namespace QL_HDNK.Controllers
         {
             if (!QrTokenService.ValidateQrToken(id, token, DateTime.Now))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Mã QR đã hết hạn hoặc không hợp lệ.");
+                ViewBag.ErrorMessage = "Mã QR đã hết hạn hoặc không hợp lệ.";
+                return View("Error");
             }
 
             var userId = CurrentUserId();
             var suKien = db.SuKiens.Find(id);
             if (suKien == null || !IsAttendanceOpen(suKien))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Sự kiện chưa mở điểm danh.");
+                ViewBag.ErrorMessage = "Sự kiện chưa mở điểm danh hoặc không tồn tại.";
+                return View("Error");
             }
 
             if (!CanAccessEvent(suKien))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                ViewBag.ErrorMessage = "Bạn không có quyền truy cập sự kiện này.";
+                return View("Error");
             }
 
             ViewBag.Token = QrTokenService.CreateSubmissionToken(id, userId, DateTime.Now);
@@ -597,23 +601,27 @@ namespace QL_HDNK.Controllers
             var userId = CurrentUserId();
             if (!QrTokenService.ValidateSubmissionToken(id, userId, token, DateTime.Now))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Mã QR đã hết hạn hoặc không hợp lệ.");
+                ViewBag.ErrorMessage = "Mã QR đã hết hạn hoặc không hợp lệ.";
+                return View("Error");
             }
 
             var suKien = db.SuKiens.Find(id);
             if (suKien == null || string.IsNullOrEmpty(userId))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                ViewBag.ErrorMessage = "Sự kiện hoặc người dùng không tồn tại.";
+                return View("Error");
             }
 
             if (!CanAccessEvent(suKien))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.Forbidden);
+                ViewBag.ErrorMessage = "Bạn không có quyền truy cập sự kiện này.";
+                return View("Error");
             }
 
             if (!IsAttendanceOpen(suKien))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Sự kiện chưa mở điểm danh.");
+                ViewBag.ErrorMessage = "Sự kiện chưa mở điểm danh.";
+                return View("Error");
             }
 
             // Kiểm tra tính hợp lệ của file ảnh
@@ -983,7 +991,11 @@ namespace QL_HDNK.Controllers
         public ActionResult XuatPdfCaNhan()
         {
             var userId = CurrentUserId();
-            if (string.IsNullOrEmpty(userId)) return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            if (string.IsNullOrEmpty(userId)) 
+            {
+                ViewBag.ErrorMessage = "Vui lòng đăng nhập lại.";
+                return View("Error");
+            }
 
             var student = db.NguoiDungs.Include(u => u.LopHoc).FirstOrDefault(u => u.MaNguoiDung == userId);
             if (student == null) return HttpNotFound();

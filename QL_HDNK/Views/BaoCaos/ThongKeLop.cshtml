@@ -116,21 +116,13 @@
                         @Html.HiddenFor(m => m.MaNamHoc)
                         @Html.HiddenFor(m => m.MaHocKy)
                         <input type="hidden" name="format" value="excel" />
-                        <button type="submit" class="btn btn-success">
+                        <button type="submit" class="btn btn-success" style="margin-right: 5px;">
                             <i class="bi bi-file-earmark-excel me-1"></i>Xuất Excel
                         </button>
                     }
-                    @using (Html.BeginForm("ExportClass", "BaoCaos", FormMethod.Post))
-                    {
-                        @Html.HiddenFor(m => m.MaKhoa)
-                        @Html.HiddenFor(m => m.MaLop)
-                        @Html.HiddenFor(m => m.MaNamHoc)
-                        @Html.HiddenFor(m => m.MaHocKy)
-                        <input type="hidden" name="format" value="pdf" />
-                        <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-file-earmark-pdf me-1"></i>Xuất PDF
-                        </button>
-                    }
+                    <button type="button" class="btn btn-danger" onclick="exportToPDF()">
+                        <i class="bi bi-file-earmark-pdf me-1"></i>Xuất PDF
+                    </button>
                 </div>
             </div>
 
@@ -262,5 +254,41 @@
                 }
             });
         });
+
+        function exportToPDF() {
+            var main = document.querySelector('main');
+            
+            var tableCard = document.querySelector('section.card.overflow-hidden');
+            var filterCard = document.querySelector('section.card.mb-4');
+            
+            var prevTable = tableCard ? tableCard.style.display : '';
+            var prevFilter = filterCard ? filterCard.style.display : '';
+            
+            if (tableCard) tableCard.style.display = 'none';
+            if (filterCard) filterCard.style.display = 'none';
+            
+            html2canvas(main, { scale: 2, useCORS: true }).then(function(canvas) {
+                if (tableCard) tableCard.style.display = prevTable;
+                if (filterCard) filterCard.style.display = prevFilter;
+                
+                var base64Image = canvas.toDataURL('image/jpeg', 0.95);
+                
+                var form = document.createElement('form');
+                form.method = 'POST';
+                form.action = '@Url.Action("ExportClass", "BaoCaos")';
+                
+                var addInput = function(n, v) { var el = document.createElement('input'); el.type = 'hidden'; el.name = n; el.value = v; form.appendChild(el); };
+                addInput('MaKhoa', '@Model.MaKhoa');
+                addInput('MaLop', '@Model.MaLop');
+                addInput('MaNamHoc', '@Model.MaNamHoc');
+                addInput('MaHocKy', '@Model.MaHocKy');
+                addInput('format', 'pdf');
+                addInput('HeaderImageBase64', base64Image);
+                
+                document.body.appendChild(form);
+                form.submit();
+            });
+        }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 }

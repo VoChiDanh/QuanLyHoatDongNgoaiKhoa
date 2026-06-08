@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -24,10 +24,84 @@ namespace QL_HDNK.Controllers
         /// Hiển thị danh sách người dùng.
         /// </summary>
         /// <returns>View danh sách người dùng.</returns>
-        public ActionResult Index()
+        public ActionResult Index(string search, string maKhoa, string maLop, string maQuyen, int page = 1)
         {
-            var nguoiDungs = db.NguoiDungs.Include(n => n.LopHoc).Include(n => n.QuyenHan);
-            return View(nguoiDungs.ToList());
+            var query = db.NguoiDungs.Include(n => n.LopHoc).Include(n => n.QuyenHan).AsQueryable();
+
+            // 1. Tìm kiếm (Mã sinh viên, Họ tên, Email)
+            if (!string.IsNullOrEmpty(search))
+            {
+                search = search.Trim();
+                query = query.Where(n => n.MaSinhVien.Contains(search) || 
+                                         n.HoTen.Contains(search) || 
+                                         n.Email.Contains(search));
+            }
+
+            // 2. Lọc theo Khoa (thông qua LopHoc.MaKhoa)
+            if (!string.IsNullOrEmpty(maKhoa))
+            {
+                query = query.Where(n => n.LopHoc != null && n.LopHoc.MaKhoa == maKhoa);
+                
+                // Nếu lớp học được chọn không thuộc khoa hiện tại, xóa lọc lớp học
+                if (!string.IsNullOrEmpty(maLop))
+                {
+                    var selectedClass = db.LopHocs.Find(maLop);
+                    if (selectedClass == null || selectedClass.MaKhoa != maKhoa)
+                    {
+                        maLop = null;
+                    }
+                }
+            }
+
+            // 3. Lọc theo Lớp
+            if (!string.IsNullOrEmpty(maLop))
+            {
+                query = query.Where(n => n.MaLop == maLop);
+            }
+
+            // 4. Lọc theo Quyền hạn
+            if (!string.IsNullOrEmpty(maQuyen))
+            {
+                query = query.Where(n => n.MaQuyen == maQuyen);
+            }
+
+            // Phân trang
+            int pageSize = 15;
+            int totalItems = query.Count();
+            int totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+            if (page < 1) page = 1;
+            if (totalPages > 0 && page > totalPages) page = totalPages;
+
+            var list = query
+                .OrderBy(n => n.MaSinhVien ?? n.MaNguoiDung)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+            // Lưu thông tin bộ lọc hiện tại
+            ViewBag.CurrentSearch = search;
+            ViewBag.CurrentMaKhoa = maKhoa;
+            ViewBag.CurrentMaLop = maLop;
+            ViewBag.CurrentMaQuyen = maQuyen;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.TotalItems = totalItems;
+            ViewBag.PageSize = pageSize;
+
+            // Nạp danh sách lựa chọn cho bộ lọc
+            ViewBag.MaKhoa = new SelectList(db.Khoas, "MaKhoa", "TenKhoa", maKhoa);
+            
+            // Lọc danh sách lớp học theo khoa nếu có chọn khoa
+            var classesQuery = db.LopHocs.AsQueryable();
+            if (!string.IsNullOrEmpty(maKhoa))
+            {
+                classesQuery = classesQuery.Where(l => l.MaKhoa == maKhoa);
+            }
+            ViewBag.MaLop = new SelectList(classesQuery.OrderBy(l => l.TenLop), "MaLop", "TenLop", maLop);
+            
+            ViewBag.MaQuyen = new SelectList(db.QuyenHans, "MaQuyen", "TenQuyen", maQuyen);
+
+            return View(list);
         }
 
         /// <summary>

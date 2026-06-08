@@ -1,83 +1,82 @@
-﻿@model QL_HDNK.Models.NguoiDung
+@model QL_HDNK.Models.NguoiDung
 
 @{
-    ViewBag.Title = "Xóa";
+    ViewBag.Title = "Xóa tài khoản người dùng";
 }
 
-<h2>Xóa</h2>
-
-<h3>Bạn có chắc chắn muốn xóa bản ghi này không?</h3>
-<div>
-    <h4>Người dùng</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.MaSinhVien)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.MaSinhVien)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.MatKhau)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.MatKhau)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.HoTen)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.HoTen)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.NgaySinh)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.NgaySinh)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.LopHoc.TenLop)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.LopHoc.TenLop)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.QuyenHan.TenQuyen)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.QuyenHan.TenQuyen)
-        </dd>
-
-    </dl>
-
-    @using (Html.BeginForm()) {
-        @Html.AntiForgeryToken()
-
-        <div class="form-actions no-color">
-            <input type="submit" value="Xóa" class="btn btn-default" /> |
-            @Html.ActionLink("Quay lại danh sách", "Index")
+<main class="module-page user-delete-page">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow text-muted">Người dùng</span>
+            <h1 class="h2 fw-bold text-danger m-0">Xóa tài khoản</h1>
+            <p class="text-muted m-0">Xóa vĩnh viễn tài khoản người dùng ra khỏi hệ thống.</p>
         </div>
-    }
-</div>
+        <div>
+            <a href="@Url.Action("Index")" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i> Quay lại</a>
+        </div>
+    </div>
 
+    <div class="row mt-4">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm border-0 border-top border-danger border-3">
+                <div class="card-header bg-light py-3">
+                    <h5 class="card-title fw-bold text-danger mb-0">
+                        <i class="bi bi-exclamation-triangle-fill me-2"></i>Cảnh báo xóa tài khoản
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-warning">
+                        <i class="bi bi-info-circle-fill me-2"></i>
+                        Hành động này <strong>không thể hoàn tác</strong>. Dữ liệu liên quan đến người dùng này (nhật ký, đăng ký hoạt động) có thể bị ảnh hưởng.
+                    </div>
 
+                    <h6 class="fw-bold mb-3">Thông tin tài khoản cần xóa:</h6>
 
+                    <div class="row mb-3 border-bottom pb-2">
+                        <div class="col-sm-4 text-muted fw-semibold">Mã người dùng / ID:</div>
+                        <div class="col-sm-8 text-dark font-monospace fw-bold">@Model.MaNguoiDung</div>
+                    </div>
+
+                    <div class="row mb-3 border-bottom pb-2">
+                        <div class="col-sm-4 text-muted fw-semibold">Mã sinh viên / MSSV:</div>
+                        <div class="col-sm-8 text-dark font-monospace fw-bold">@(string.IsNullOrEmpty(Model.MaSinhVien) ? "Chưa cập nhật" : Model.MaSinhVien)</div>
+                    </div>
+
+                    <div class="row mb-3 border-bottom pb-2">
+                        <div class="col-sm-4 text-muted fw-semibold">Họ và tên:</div>
+                        <div class="col-sm-8 text-dark fw-bold text-danger">@Model.HoTen</div>
+                    </div>
+
+                    <div class="row mb-3 border-bottom pb-2">
+                        <div class="col-sm-4 text-muted fw-semibold">Email:</div>
+                        <div class="col-sm-8 text-dark">@(Model.Email ?? "Chưa cập nhật")</div>
+                    </div>
+
+                    <div class="row mb-3 border-bottom pb-2">
+                        <div class="col-sm-4 text-muted fw-semibold">Lớp học:</div>
+                        <div class="col-sm-8 text-dark">
+                            @(Model.LopHoc != null ? Model.LopHoc.TenLop : "Không có")
+                        </div>
+                    </div>
+
+                    <div class="row mb-3 pb-2">
+                        <div class="col-sm-4 text-muted fw-semibold">Quyền hạn hệ thống:</div>
+                        <div class="col-sm-8">
+                            <span class="badge bg-secondary">
+                                @(Model.QuyenHan != null ? Model.QuyenHan.TenQuyen : "Chưa phân quyền")
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light d-flex justify-content-end gap-2 py-3">
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-danger"><i class="bi bi-trash me-1"></i> Xác nhận xóa vĩnh viễn</button>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

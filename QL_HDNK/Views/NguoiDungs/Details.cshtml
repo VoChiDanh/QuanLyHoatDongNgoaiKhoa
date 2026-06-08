@@ -1,77 +1,105 @@
-﻿@model QL_HDNK.Models.NguoiDung
+@model QL_HDNK.Models.NguoiDung
 
 @{
-    ViewBag.Title = "Chi tiết";
+    ViewBag.Title = "Chi tiết người dùng";
 }
 
-<h2>Chi tiết</h2>
+<main class="module-page user-detail-page">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow text-muted">Người dùng</span>
+            <h1 class="h2 fw-bold text-primary m-0">Thông tin chi tiết</h1>
+            <p class="text-muted m-0">Xem thông tin tài khoản người dùng và quyền hạn tương ứng.</p>
+        </div>
+        <div>
+            <a href="@Url.Action("Index")" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i> Quay lại</a>
+        </div>
+    </div>
 
-<div>
-    <h4>Người dùng</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.MaSinhVien)
-        </dt>
+    <div class="row mt-4">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light py-3">
+                    <h5 class="card-title fw-bold text-dark mb-0">
+                        <i class="bi bi-person-badge me-2 text-primary"></i>Thông tin tài khoản
+                    </h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row mb-3 border-bottom pb-2">
+                        <div class="col-sm-4 text-muted fw-semibold">Mã người dùng:</div>
+                        <div class="col-sm-8 text-dark font-monospace fw-bold">@Model.MaNguoiDung</div>
+                    </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.MaSinhVien)
-        </dd>
+                    <div class="row mb-3 border-bottom pb-2">
+                        <div class="col-sm-4 text-muted fw-semibold">Mã sinh viên / ID:</div>
+                        <div class="col-sm-8 text-dark font-monospace fw-bold">@(string.IsNullOrEmpty(Model.MaSinhVien) ? "Chưa cập nhật" : Model.MaSinhVien)</div>
+                    </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.MatKhau)
-        </dt>
+                    <div class="row mb-3 border-bottom pb-2">
+                        <div class="col-sm-4 text-muted fw-semibold">Họ và tên:</div>
+                        <div class="col-sm-8 text-dark fw-bold fs-5 text-primary">@Model.HoTen</div>
+                    </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.MatKhau)
-        </dd>
+                    <div class="row mb-3 border-bottom pb-2">
+                        <div class="col-sm-4 text-muted fw-semibold">Email:</div>
+                        <div class="col-sm-8 text-dark">
+                            @if (!string.IsNullOrEmpty(Model.Email))
+                            {
+                                <a href="mailto:@Model.Email" class="text-decoration-none"><i class="bi bi-envelope me-1"></i>@Model.Email</a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">Chưa cập nhật</span>
+                            }
+                        </div>
+                    </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.HoTen)
-        </dt>
+                    <div class="row mb-3 border-bottom pb-2">
+                        <div class="col-sm-4 text-muted fw-semibold">Ngày sinh:</div>
+                        <div class="col-sm-8 text-dark">
+                            @(Model.NgaySinh.HasValue ? Model.NgaySinh.Value.ToString("dd/MM/yyyy") : "Chưa cập nhật")
+                        </div>
+                    </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.HoTen)
-        </dd>
+                    <div class="row mb-3 border-bottom pb-2">
+                        <div class="col-sm-4 text-muted fw-semibold">Lớp học:</div>
+                        <div class="col-sm-8 text-dark">
+                            @if (Model.LopHoc != null)
+                            {
+                                <span class="fw-semibold text-dark">@Model.LopHoc.TenLop</span>
+                                if (Model.LopHoc.Khoa != null)
+                                {
+                                    <span class="text-muted small ms-2">(@Model.LopHoc.Khoa.TenKhoa)</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted">Không thuộc lớp nào</span>
+                            }
+                        </div>
+                    </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.NgaySinh)
-        </dt>
+                    <div class="row mb-3 border-bottom pb-2">
+                        <div class="col-sm-4 text-muted fw-semibold">Quyền hạn hệ thống:</div>
+                        <div class="col-sm-8">
+                            <span class="badge bg-primary fs-6">
+                                @(Model.QuyenHan != null ? Model.QuyenHan.TenQuyen : "Chưa phân quyền")
+                            </span>
+                        </div>
+                    </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.NgaySinh)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.LopHoc.TenLop)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.LopHoc.TenLop)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.QuyenHan.TenQuyen)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.QuyenHan.TenQuyen)
-        </dd>
-
-    </dl>
-</div>
-<p>
-    @Html.ActionLink("Sửa", "Edit", new { id = Model.MaNguoiDung }) |
-    @Html.ActionLink("Quay lại danh sách", "Index")
-</p>
-
-
-
+                    <div class="row mb-3 pb-2">
+                        <div class="col-sm-4 text-muted fw-semibold">Mật khẩu (SHA256):</div>
+                        <div class="col-sm-8 text-muted font-monospace small text-truncate" style="max-width: 100%;" title="@Model.MatKhau">
+                            @Model.MatKhau <span class="badge bg-light text-secondary ms-1">Mã hóa bảo mật</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer bg-light d-flex justify-content-end gap-2 py-3">
+                    <a href="@Url.Action("Edit", new { id = Model.MaNguoiDung })" class="btn btn-primary"><i class="bi bi-pencil me-1"></i> Chỉnh sửa</a>
+                    <a href="@Url.Action("Delete", new { id = Model.MaNguoiDung })" class="btn btn-outline-danger"><i class="bi bi-trash me-1"></i> Xóa tài khoản</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>

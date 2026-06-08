@@ -12,6 +12,7 @@ namespace QL_HDNK.Models
         public string MaHocKy { get; set; }
         public string MaNamHoc { get; set; }
         public string CheDo { get; set; } // "so-luong" hoặc "phan-tram"
+        public string HeaderImageBase64 { get; set; }
 
         public List<ClassReportEventHeader> Events { get; set; } = new List<ClassReportEventHeader>();
         public List<ClassReportRow> Rows { get; set; } = new List<ClassReportRow>();

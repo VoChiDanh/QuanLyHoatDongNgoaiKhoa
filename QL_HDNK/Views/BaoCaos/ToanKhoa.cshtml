@@ -351,15 +351,7 @@
                 <input type="hidden" name="format" value="excel" />
                 <button type="submit" class="btn btn-success">Xuất Excel</button>
             }
-            @using (Html.BeginForm("ExportFaculty", "BaoCaos", FormMethod.Post))
-            {
-                @Html.HiddenFor(m => m.MaKhoa)
-                @Html.HiddenFor(m => m.MaNamHoc)
-                @Html.HiddenFor(m => m.MaHocKy)
-                @Html.HiddenFor(m => m.CheDo)
-                <input type="hidden" name="format" value="pdf" />
-                <button type="submit" class="btn btn-danger">Xuất PDF</button>
-            }
+            <button type="button" class="btn btn-danger" onclick="exportToPDF()">Xuất PDF</button>
         </div>
     </section>
 
@@ -469,3 +461,49 @@
         </section>
     }
 </main>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+    function exportToPDF() {
+        var main = document.querySelector('main');
+        
+        var matrix = document.querySelector('.matrix-panel');
+        var matrixTitle = document.querySelectorAll('.report-section-title')[1];
+        var command = document.querySelector('.report-command');
+        var filter = document.querySelector('.report-filter');
+        
+        var prevMatrix = matrix ? matrix.style.display : '';
+        var prevTitle = matrixTitle ? matrixTitle.style.display : '';
+        var prevCommand = command ? command.style.display : '';
+        var prevFilter = filter ? filter.style.display : '';
+        
+        if (matrix) matrix.style.display = 'none';
+        if (matrixTitle) matrixTitle.style.display = 'none';
+        if (command) command.style.display = 'none';
+        if (filter) filter.style.display = 'none';
+        
+        html2canvas(main, { scale: 2, useCORS: true }).then(function(canvas) {
+            if (matrix) matrix.style.display = prevMatrix;
+            if (matrixTitle) matrixTitle.style.display = prevTitle;
+            if (command) command.style.display = prevCommand;
+            if (filter) filter.style.display = prevFilter;
+            
+            var base64Image = canvas.toDataURL('image/jpeg', 0.95);
+            
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '@Url.Action("ExportFaculty", "BaoCaos")';
+            
+            var addInput = function(n, v) { var el = document.createElement('input'); el.type = 'hidden'; el.name = n; el.value = v; form.appendChild(el); };
+            addInput('MaKhoa', '@Model.MaKhoa');
+            addInput('MaNamHoc', '@Model.MaNamHoc');
+            addInput('MaHocKy', '@Model.MaHocKy');
+            addInput('CheDo', '@Model.CheDo');
+            addInput('format', 'pdf');
+            addInput('HeaderImageBase64', base64Image);
+            
+            document.body.appendChild(form);
+            form.submit();
+        });
+    }
+</script>

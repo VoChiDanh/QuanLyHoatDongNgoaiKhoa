@@ -1,99 +1,96 @@
-﻿@model QL_HDNK.Models.NguoiDung
+@model QL_HDNK.Models.NguoiDung
 
 @{
-    ViewBag.Title = "Thêm mới";
+    ViewBag.Title = "Thêm mới người dùng";
 }
 
-<h2>Thêm mới</h2>
-
-
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Người dùng</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.MaNguoiDung, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.MaNguoiDung, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.MaNguoiDung, "", new { @class = "text-danger" })
-            </div>
+<main class="module-page user-create-page">
+    <div class="page-heading">
+        <div>
+            <span class="eyebrow text-muted">Người dùng</span>
+            <h1 class="h2 fw-bold text-primary m-0">Thêm mới tài khoản</h1>
+            <p class="text-muted m-0">Tạo tài khoản người dùng mới và chỉ định quyền hạn truy cập hệ thống.</p>
         </div>
-
-        <div class="form-group">
-            @Html.LabelFor(model => model.MaSinhVien, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.MaSinhVien, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.MaSinhVien, "", new { @class = "text-danger" })
-            </div>
+        <div>
+            <a href="@Url.Action("Index")" class="btn btn-outline-secondary"><i class="bi bi-arrow-left me-1"></i> Quay lại</a>
         </div>
+    </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.MatKhau, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.MatKhau, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.MatKhau, "", new { @class = "text-danger" })
-            </div>
-        </div>
+    <div class="row mt-4">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-light py-3">
+                    <h5 class="card-title fw-bold text-dark mb-0">
+                        <i class="bi bi-person-plus me-2 text-primary"></i>Điền thông tin người dùng
+                    </h5>
+                </div>
+                @using (Html.BeginForm())
+                {
+                    @Html.AntiForgeryToken()
+                    
+                    <div class="card-body p-4">
+                        @Html.ValidationSummary(true, "", new { @class = "alert alert-danger" })
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.HoTen, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.HoTen, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.HoTen, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">Mã người dùng (ID hệ thống)</label>
+                                @Html.EditorFor(model => model.MaNguoiDung, new { htmlAttributes = new { @class = "form-control", placeholder = "Ví dụ: ND0001" } })
+                                @Html.ValidationMessageFor(model => model.MaNguoiDung, "", new { @class = "text-danger small" })
+                            </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.NgaySinh, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(model => model.NgaySinh, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
-                @Html.ValidationMessageFor(model => model.NgaySinh, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">Mã sinh viên (nếu có)</label>
+                                @Html.EditorFor(model => model.MaSinhVien, new { htmlAttributes = new { @class = "form-control", placeholder = "Ví dụ: SV22110001" } })
+                                @Html.ValidationMessageFor(model => model.MaSinhVien, "", new { @class = "text-danger small" })
+                            </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold text-muted small">Họ và tên</label>
+                                @Html.EditorFor(model => model.HoTen, new { htmlAttributes = new { @class = "form-control", placeholder = "Nhập đầy đủ họ và tên" } })
+                                @Html.ValidationMessageFor(model => model.HoTen, "", new { @class = "text-danger small" })
+                            </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.MaLop, "Lớp", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("MaLop", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.MaLop, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold text-muted small">Mật khẩu</label>
+                                @Html.EditorFor(model => model.MatKhau, new { htmlAttributes = new { @class = "form-control", placeholder = "Nhập mật khẩu cho tài khoản" } })
+                                @Html.ValidationMessageFor(model => model.MatKhau, "", new { @class = "text-danger small" })
+                            </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.MaQuyen, "Quyền hạn", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("MaQuyen", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.MaQuyen, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">Ngày sinh</label>
+                                @Html.TextBoxFor(model => model.NgaySinh, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+                                @Html.ValidationMessageFor(model => model.NgaySinh, "", new { @class = "text-danger small" })
+                            </div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Tạo mới" class="btn btn-default" />
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">Email liên hệ</label>
+                                @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", placeholder = "email@example.com", type = "email" } })
+                                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger small" })
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">Lớp học</label>
+                                @Html.DropDownList("MaLop", null, "--- Chọn lớp học ---", htmlAttributes: new { @class = "form-select" })
+                                @Html.ValidationMessageFor(model => model.MaLop, "", new { @class = "text-danger small" })
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-muted small">Quyền hạn hệ thống</label>
+                                @Html.DropDownList("MaQuyen", null, htmlAttributes: new { @class = "form-select" })
+                                @Html.ValidationMessageFor(model => model.MaQuyen, "", new { @class = "text-danger small" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light d-flex justify-content-end gap-2 py-3">
+                        <a href="@Url.Action("Index")" class="btn btn-outline-secondary">Hủy bỏ</a>
+                        <button type="submit" class="btn btn-primary"><i class="bi bi-save me-1"></i> Tạo mới tài khoản</button>
+                    </div>
+                }
             </div>
         </div>
     </div>
-}
-
-<div>
-    @Html.ActionLink("Quay lại danh sách", "Index")
-</div>
+</main>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
 }
-
-
-
